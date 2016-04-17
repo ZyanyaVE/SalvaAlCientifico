@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import static java.awt.Color.black;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -25,6 +26,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.Scanner;
@@ -40,6 +42,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     private int ventana = 1;
     private int vidas = 4;
     private int coordManos;
+    private int indicePregunta = 19;    // 0 - 19
     private boolean pausa = false;
     private boolean manuActivo = true;
     private Boton botona;
@@ -47,6 +50,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     private Boton botonc;
     private Boton botond;
     ArrayList<Integer> numbers;
+    ArrayList<Pregunta> preguntas;
 
     //////////////////////////// Objetos ////////////////////////////////
     private Image dbImage;                          // Imagen a proyectar
@@ -178,6 +182,8 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
                 g.drawImage(tituloPrincipal, 15, 40, this);
                 g.drawImage(mesa, 5, 683, this);
 
+                imprimePregunta(g);
+
                 // Dependiendo de las vidas que le queden al usuario son los
                 // científicos que se van a mostrar en pantalla, asignando tambien
                 // una nueva coordenada en X a la mano
@@ -259,6 +265,10 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         if (k == '4') {
             vidas = 4;
         }
+
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            System.exit(0);
+        }
     }
 
     @Override
@@ -276,22 +286,34 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         // Opcion A
         if (x > botona.getCoordX() && x < botona.getCoordX() + 55
                 && y > botona.getCoordY() && y < botona.getCoordY() + 55) {
-            vidas--;
+            // Si opcion A era la respuesta correcta
+            if (!preguntas.get(indicePregunta).getRespuesta(0).isCorrecta()){
+                vidas--;
+            }
         }
         // Opcion B
         if (x > botonb.getCoordX() && x < botonb.getCoordX() + 55
                 && y > botonb.getCoordY() && y < botonb.getCoordY() + 55) {
-            vidas--;
+            // Si opcion B era la respuesta correcta
+            if (!preguntas.get(indicePregunta).getRespuesta(1).isCorrecta()){
+                vidas--;
+            }
         }
         // Opcion C
         if (x > botonc.getCoordX() && x < botonc.getCoordX() + 55
                 && y > botonc.getCoordY() && y < botonc.getCoordY() + 55) {
-            vidas--;
+            // Si opcion C era la respuesta correcta
+            if (!preguntas.get(indicePregunta).getRespuesta(2).isCorrecta()){
+                vidas--;
+            }
         }
         // Opcion D
         if (x > botond.getCoordX() && x < botond.getCoordX() + 55
                 && y > botond.getCoordY() && y < botond.getCoordY() + 55) {
-            vidas--;
+            // Si opcion D era la respuesta correcta
+            if (!preguntas.get(indicePregunta).getRespuesta(3).isCorrecta()){
+                vidas--;
+            }
         }
 
     }
@@ -360,6 +382,9 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     }
 
     public void leerArchivo() {
+        preguntas = new ArrayList<Pregunta>(20);
+        Pregunta newPregunta;
+        ArrayList<Respuesta> respuestas = new ArrayList<Respuesta>(4);
         // The name of the file to open.
         String fileName = "src/salvaAlCientifico/docs/Preguntas.txt";
 
@@ -368,15 +393,35 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
 
         try {
             // FileReader reads text files in the default encoding.
-            FileReader fileReader
-                    = new FileReader(fileName);
+            FileReader fileReader = new FileReader(fileName);
 
             // Always wrap FileReader in BufferedReader.
-            BufferedReader bufferedReader
-                    = new BufferedReader(fileReader);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
 
             while ((line = bufferedReader.readLine()) != null) {
+                respuestas.clear();
+                newPregunta = new Pregunta(line);
                 System.out.println(line);
+                line = bufferedReader.readLine();
+                System.out.println(line);
+                respuestas.add(new Respuesta(line, true));
+                line = bufferedReader.readLine();
+                System.out.println(line);
+                respuestas.add(new Respuesta(line, false));
+                line = bufferedReader.readLine();
+                System.out.println(line);
+                respuestas.add(new Respuesta(line, false));
+                line = bufferedReader.readLine();
+                System.out.println(line);
+                respuestas.add(new Respuesta(line, false));
+
+                long seed = System.nanoTime();
+                Collections.shuffle(respuestas, new Random(seed));
+
+                for (int i = 0; i < 4; i++) {
+                    newPregunta.setRespuesta(respuestas.get(i));
+                }
+                preguntas.add(newPregunta);
             }
 
             // Always close files.
@@ -395,24 +440,50 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
 
     }
 
-     /**
-     * Metodo <I>desordenarPreguntas</I>
-     * te método crea un ArrayList con numeros aleatorios que permitiran dar 
-     * aleatoriedad las preguntas
-     * @param e es el <code>evento</code> generado al presionar las teclas.
-     */
-    public void desordenarPreguntas() {
-        numbers = new ArrayList<Integer>();
-        Random randomGenerator = new Random();
-        while (numbers.size() < 4) {
+    public void imprimePregunta(Graphics g) {
+        String aux;
+        String resp;
+        int indice = 0;
+        int offsetX = 0, offsetY = 0;
 
-            int random = randomGenerator.nextInt(4);
-            if (!numbers.contains(random)) {
-                numbers.add(random);
+        // Especificaciones para los fonts que se utilzaran y los tamanos
+        String pregunta = preguntas.get(indicePregunta).getPregunta();
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Courier New", Font.BOLD, 38));
+
+        // Imprime preguntas en el cuadro, cuidando que no salga de los limites
+        // en x
+        int x = 645, y = 120;
+        for (int i = 0; i < pregunta.length(); i++) {
+            //System.out.println(indice);
+
+            aux = "" + pregunta.charAt(indice);
+            g.drawString(aux, x + offsetX, y + offsetY);
+            offsetX += 18;
+            // si no es la primera letra o mayor a 26 o sus multiplos 
+            if (i != 0 && i % 23 == 0) {
+                offsetX = 0;
+                //i = 0;
+                offsetY += 35;
             }
+            indice++;
         }
+
+        // Especificaciones para los fonts que se utilzaran y los tamanos
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Courier New", Font.BOLD, 30));
+
+        resp = preguntas.get(indicePregunta).getRespuesta(0).getRespuesta();
+        g.drawString(resp, botona.getCoordX() + 60, botona.getCoordY() + 35);
+        resp = preguntas.get(indicePregunta).getRespuesta(1).getRespuesta();
+        g.drawString(resp, botonb.getCoordX() + 60, botonb.getCoordY() + 35);
+        resp = preguntas.get(indicePregunta).getRespuesta(2).getRespuesta();
+        g.drawString(resp, botonc.getCoordX() + 60, botonc.getCoordY() + 35);
+        resp = preguntas.get(indicePregunta).getRespuesta(3).getRespuesta();
+        g.drawString(resp, botond.getCoordX() + 60, botond.getCoordY() + 35);
     }
 }
+
 
 /*
  "src/salvaAlCientifico/docs/Preguntas.txt"

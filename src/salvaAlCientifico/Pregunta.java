@@ -1,4 +1,4 @@
-package salvaralcientifico;
+package salvaAlCientifico;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -30,8 +30,8 @@ public class Pregunta {
         this.pregunta = pregunta;
     }
 
-    public Respuesta[] getRespuesta() {
-        return respuesta;
+    public Respuesta getRespuesta(int index) {
+        return respuesta[index];
     }
 
     public void setRespuesta(Respuesta respuesta) {
