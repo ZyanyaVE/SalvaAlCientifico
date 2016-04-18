@@ -43,6 +43,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     private int vidas = 4;
     private int coordManos;
     private int indicePregunta = 19;    // 0 - 19
+    private int indiceMenu = 1;         // 1 - 3
     private boolean pausa = false;
     private boolean manuActivo = true;
     private Boton botona;
@@ -54,16 +55,20 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
 
     //////////////////////////// Objetos ////////////////////////////////
     private Image dbImage;                          // Imagen a proyectar
-    private Image background;                       // Fondo del applet
-    private Image tituloPrincipal;
-    private Image galileo;
-    private Image marie;
-    private Image albert;
-    private Image isaac;
-    private Image aux;
-    private Image mesa;
-    private Image mano;
-    private Image cuadroPreguntas;
+    private Image image_background;                       // Fondo del applet
+    private Image image_tituloPrincipal;
+    private Image image_galileo;
+    private Image image_marie;
+    private Image image_albert;
+    private Image image_isaac;
+    private Image image_aux;
+    private Image image_mesa;
+    private Image image_mano;
+    private Image image_cuadroPreguntas;
+    private Image image_flecha;
+    private Image image_tema1;
+    private Image image_tema2;
+    private Image image_tema3;
     private Graphics dbg;                           // Objeto grafico
     private long tiempoActual;                      // Tiempo Actual
 
@@ -174,61 +179,23 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
      * @param g es el <code>objeto grafico</code> usado para dibujar.
      */
     public void paint1(Graphics g) {
-        // Ventana de Menu
-        if (ventana == 1) {
-            if (background != null) {
-                // Paint de la imagen de fondo
-                g.drawImage(background, 0, 0, ANCHO, ALTO, this);
-                g.drawImage(tituloPrincipal, 15, 40, this);
-                g.drawImage(mesa, 5, 683, this);
+        if (image_background != null) {
+            // Paint de la imagen de fondo
+            g.drawImage(image_background, 0, 0, ANCHO, ALTO, this);
+            g.drawImage(image_tituloPrincipal, 15, 40, this);
 
-                imprimePregunta(g);
+            // Ventana de Menu
+            if (ventana == 1) {
+                pantallaMenu(g);
 
-                // Dependiendo de las vidas que le queden al usuario son los
-                // científicos que se van a mostrar en pantalla, asignando tambien
-                // una nueva coordenada en X a la mano
-                switch (vidas) {
-                    case 4:
-                        coordManos = 20;
-                        g.drawImage(albert, 20, 480, this);
-                        g.drawImage(marie, 180, 480, this);
-                        g.drawImage(isaac, 330, 480, this);
-                        g.drawImage(galileo, 510, 480, this);
-                        break;
-                    case 3:
-                        coordManos = 180;
-                        g.drawImage(marie, 180, 480, this);
-                        g.drawImage(isaac, 330, 480, this);
-                        g.drawImage(galileo, 510, 480, this);
-                        break;
-                    case 2:
-                        coordManos = 330;
-                        g.drawImage(isaac, 330, 480, this);
-                        g.drawImage(galileo, 510, 480, this);
-                        break;
-                    case 1:
-                        coordManos = 510;
-                        g.drawImage(galileo, 510, 480, this);
-                        break;
-                }
-                g.drawImage(mano, coordManos - 8, 250, this);
-                g.drawImage(cuadroPreguntas, 625, 40, this);
-                g.drawImage(botona.getImagen(), botona.getCoordX(), botona.getCoordY(), this);
-                g.drawImage(botonb.getImagen(), botonb.getCoordX(), botonb.getCoordY(), this);
-                g.drawImage(botonc.getImagen(), botonc.getCoordX(), botonc.getCoordY(), this);
-                g.drawImage(botond.getImagen(), botond.getCoordX(), botond.getCoordY(), this);
-
-            } else {
-                //Da un mensaje mientras se carga el dibujo	
-                g.drawString("No se cargo la imagen..", 20, 20);
+            } else if (ventana == 2) {
+                pantallaJuego(g);
             }
-
         } else {
-            if (ventana == 2) {
-
-            }
-
+            //Da un mensaje mientras se carga el dibujo	
+            g.drawString("No se cargo la imagen..", 20, 20);
         }
+
     }
 
     /**
@@ -253,17 +220,52 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
      */
     public void keyReleased(KeyEvent e) {
         char k = e.getKeyChar();
-        if (k == '1') {
-            vidas = 1;
-        }
-        if (k == '2') {
-            vidas = 2;
-        }
-        if (k == '3') {
-            vidas = 3;
-        }
-        if (k == '4') {
-            vidas = 4;
+
+        if (ventana == 1) {
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_UP:
+                    if (indiceMenu == 3)
+                        indiceMenu = 1;
+                    else
+                        indiceMenu++;
+                    break;
+                case KeyEvent.VK_DOWN:
+                    if (indiceMenu == 1)
+                        indiceMenu = 3;
+                    else
+                        indiceMenu--;
+                    break;
+                case KeyEvent.VK_LEFT:
+                    if (indiceMenu == 1)
+                        indiceMenu = 3;
+                    else
+                        indiceMenu--;
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    if (indiceMenu == 3)
+                        indiceMenu = 1;
+                    else
+                        indiceMenu++;
+                    break;
+                case KeyEvent.VK_ENTER:
+                    ventana = 2;
+                    break;
+            }
+            System.out.println(indiceMenu);
+            
+        } else if (ventana == 2) {
+            if (k == '1') {
+                vidas = 1;
+            }
+            if (k == '2') {
+                vidas = 2;
+            }
+            if (k == '3') {
+                vidas = 3;
+            }
+            if (k == '4') {
+                vidas = 4;
+            }
         }
 
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -282,37 +284,39 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         int x = e.getX();
         int y = e.getY();
 
-        //////////////////////   SELECCION DE UNA OPCION    ////////////////////
-        // Opcion A
-        if (x > botona.getCoordX() && x < botona.getCoordX() + 55
-                && y > botona.getCoordY() && y < botona.getCoordY() + 55) {
-            // Si opcion A era la respuesta correcta
-            if (!preguntas.get(indicePregunta).getRespuesta(0).isCorrecta()){
-                vidas--;
+        if (ventana == 2) {
+            //////////////////////   SELECCION DE UNA OPCION    ////////////////////
+            // Opcion A
+            if (x > botona.getCoordX() && x < botona.getCoordX() + 55
+                    && y > botona.getCoordY() && y < botona.getCoordY() + 55) {
+                // Si opcion A era la respuesta correcta
+                if (!preguntas.get(indicePregunta).getRespuesta(0).isCorrecta()) {
+                    vidas--;
+                }
             }
-        }
-        // Opcion B
-        if (x > botonb.getCoordX() && x < botonb.getCoordX() + 55
-                && y > botonb.getCoordY() && y < botonb.getCoordY() + 55) {
-            // Si opcion B era la respuesta correcta
-            if (!preguntas.get(indicePregunta).getRespuesta(1).isCorrecta()){
-                vidas--;
+            // Opcion B
+            if (x > botonb.getCoordX() && x < botonb.getCoordX() + 55
+                    && y > botonb.getCoordY() && y < botonb.getCoordY() + 55) {
+                // Si opcion B era la respuesta correcta
+                if (!preguntas.get(indicePregunta).getRespuesta(1).isCorrecta()) {
+                    vidas--;
+                }
             }
-        }
-        // Opcion C
-        if (x > botonc.getCoordX() && x < botonc.getCoordX() + 55
-                && y > botonc.getCoordY() && y < botonc.getCoordY() + 55) {
-            // Si opcion C era la respuesta correcta
-            if (!preguntas.get(indicePregunta).getRespuesta(2).isCorrecta()){
-                vidas--;
+            // Opcion C
+            if (x > botonc.getCoordX() && x < botonc.getCoordX() + 55
+                    && y > botonc.getCoordY() && y < botonc.getCoordY() + 55) {
+                // Si opcion C era la respuesta correcta
+                if (!preguntas.get(indicePregunta).getRespuesta(2).isCorrecta()) {
+                    vidas--;
+                }
             }
-        }
-        // Opcion D
-        if (x > botond.getCoordX() && x < botond.getCoordX() + 55
-                && y > botond.getCoordY() && y < botond.getCoordY() + 55) {
-            // Si opcion D era la respuesta correcta
-            if (!preguntas.get(indicePregunta).getRespuesta(3).isCorrecta()){
-                vidas--;
+            // Opcion D
+            if (x > botond.getCoordX() && x < botond.getCoordX() + 55
+                    && y > botond.getCoordY() && y < botond.getCoordY() + 55) {
+                // Si opcion D era la respuesta correcta
+                if (!preguntas.get(indicePregunta).getRespuesta(3).isCorrecta()) {
+                    vidas--;
+                }
             }
         }
 
@@ -350,35 +354,44 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     public void asignacionImagenes() {
         //Imagen de Background
         URL bURL = this.getClass().getResource("images/fondo_1.png");
-        background = Toolkit.getDefaultToolkit().getImage(bURL);
+        image_background = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/titulo.png");
-        tituloPrincipal = Toolkit.getDefaultToolkit().getImage(bURL);
+        image_tituloPrincipal = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/galileo.png");
-        galileo = Toolkit.getDefaultToolkit().getImage(bURL);
+        image_galileo = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/isaac.png");
-        isaac = Toolkit.getDefaultToolkit().getImage(bURL);
+        image_isaac = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/marie.png");
-        marie = Toolkit.getDefaultToolkit().getImage(bURL);
+        image_marie = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/albert.png");
-        albert = Toolkit.getDefaultToolkit().getImage(bURL);
+        image_albert = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/rectanguloPreguntas.png");
-        cuadroPreguntas = Toolkit.getDefaultToolkit().getImage(bURL);
+        image_cuadroPreguntas = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/botona.png");
-        aux = Toolkit.getDefaultToolkit().getImage(bURL);
-        botona = new Boton(aux, 665, 395);
+        image_aux = Toolkit.getDefaultToolkit().getImage(bURL);
+        botona = new Boton(image_aux, 665, 395);
         bURL = this.getClass().getResource("images/botonb.png");
-        aux = Toolkit.getDefaultToolkit().getImage(bURL);
-        botonb = new Boton(aux, 665, 465);
+        image_aux = Toolkit.getDefaultToolkit().getImage(bURL);
+        botonb = new Boton(image_aux, 665, 465);
         bURL = this.getClass().getResource("images/botonc.png");
-        aux = Toolkit.getDefaultToolkit().getImage(bURL);
-        botonc = new Boton(aux, 665, 535);
+        image_aux = Toolkit.getDefaultToolkit().getImage(bURL);
+        botonc = new Boton(image_aux, 665, 535);
         bURL = this.getClass().getResource("images/botond.png");
-        aux = Toolkit.getDefaultToolkit().getImage(bURL);
-        botond = new Boton(aux, 665, 605);
+        image_aux = Toolkit.getDefaultToolkit().getImage(bURL);
+        botond = new Boton(image_aux, 665, 605);
         bURL = this.getClass().getResource("images/mesa.png");
-        mesa = Toolkit.getDefaultToolkit().getImage(bURL);
+        image_mesa = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/mano.png");
-        mano = Toolkit.getDefaultToolkit().getImage(bURL);
+        image_mano = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/flecha.png");
+        image_flecha = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/tema1.png");
+        image_tema1 = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/tema2.png");
+        image_tema2 = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/tema3.png");
+        image_tema3 = Toolkit.getDefaultToolkit().getImage(bURL);
+
     }
 
     public void leerArchivo() {
@@ -481,6 +494,63 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         g.drawString(resp, botonc.getCoordX() + 60, botonc.getCoordY() + 35);
         resp = preguntas.get(indicePregunta).getRespuesta(3).getRespuesta();
         g.drawString(resp, botond.getCoordX() + 60, botond.getCoordY() + 35);
+    }
+
+    public void pantallaJuego(Graphics g) {
+        g.drawImage(image_mesa, 5, 683, this);
+        imprimePregunta(g);
+
+        // Dependiendo de las vidas que le queden al usuario son los
+        // científicos que se van a mostrar en pantalla, asignando tambien
+        // una nueva coordenada en X a la mano
+        switch (vidas) {
+            case 4:
+                coordManos = 20;
+                g.drawImage(image_albert, 20, 480, this);
+                g.drawImage(image_marie, 180, 480, this);
+                g.drawImage(image_isaac, 330, 480, this);
+                g.drawImage(image_galileo, 510, 480, this);
+                break;
+            case 3:
+                coordManos = 180;
+                g.drawImage(image_marie, 180, 480, this);
+                g.drawImage(image_isaac, 330, 480, this);
+                g.drawImage(image_galileo, 510, 480, this);
+                break;
+            case 2:
+                coordManos = 330;
+                g.drawImage(image_isaac, 330, 480, this);
+                g.drawImage(image_galileo, 510, 480, this);
+                break;
+            case 1:
+                coordManos = 510;
+                g.drawImage(image_galileo, 510, 480, this);
+                break;
+        }
+        g.drawImage(image_mano, coordManos - 8, 250, this);
+        g.drawImage(image_cuadroPreguntas, 625, 40, this);
+        g.drawImage(botona.getImagen(), botona.getCoordX(), botona.getCoordY(), this);
+        g.drawImage(botonb.getImagen(), botonb.getCoordX(), botonb.getCoordY(), this);
+        g.drawImage(botonc.getImagen(), botonc.getCoordX(), botonc.getCoordY(), this);
+        g.drawImage(botond.getImagen(), botond.getCoordX(), botond.getCoordY(), this);
+
+    }
+
+    public void pantallaMenu(Graphics g) {
+        
+        g.drawImage(image_tema1, 230, 250, this);
+        g.drawImage(image_tema2, 330, 400, this);
+        g.drawImage(image_tema3, 430, 550, this);
+        
+        if (indiceMenu == 1){
+            g.drawImage(image_flecha, 120, 250, this);
+        } else if (indiceMenu == 2){
+            g.drawImage(image_flecha, 220, 400, this);
+        } else if (indiceMenu == 3){
+            g.drawImage(image_flecha, 310, 550, this);
+        }
+        
+            
     }
 }
 
