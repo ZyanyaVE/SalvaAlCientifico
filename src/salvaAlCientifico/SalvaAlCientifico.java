@@ -1,11 +1,12 @@
 package salvaAlCientifico;
-
+//System.out.println(line)
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
 
  */
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -42,10 +43,11 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     private int ventana = 1;
     private int vidas = 4;
     private int coordManos;
-    private int indicePregunta = 19;    // 0 - 19
+    private int indicePregunta = 10;    // 0 - 19
     private int indiceMenu = 1;         // 1 - 3
     private boolean pausa = false;
-    private boolean manuActivo = true;
+    private boolean menuActivo = true;
+    private boolean gameOver = false;
     private Boton botona;
     private Boton botonb;
     private Boton botonc;
@@ -69,6 +71,9 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     private Image image_tema1;
     private Image image_tema2;
     private Image image_tema3;
+    private Image image_puff;
+    private Image image_pausa;
+    private Image image_salir;
     private Graphics dbg;                           // Objeto grafico
     private long tiempoActual;                      // Tiempo Actual
 
@@ -102,7 +107,6 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         ////////////////////   Caracteristicas del Applet  ////////////////////
         // Metodo que permite asignar todas las imagenes a variables Image
         asignacionImagenes();
-        leerArchivo();
         setBackground(black);                              // Color de fondo del applet
         setSize(ANCHO, ALTO);                               // Dimensiones del applet  
     }
@@ -185,11 +189,19 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
             g.drawImage(image_tituloPrincipal, 15, 40, this);
 
             // Ventana de Menu
-            if (ventana == 1) {
+            if (pausa) {
+                pantallaPausa(g);
+                System.out.println("pausa");
+            } else if (gameOver) {
+                System.out.println("gameOver");
+            } else if (ventana == 1) {  // VENTANA DE MENU
+                System.out.println("menu");
                 pantallaMenu(g);
-
-            } else if (ventana == 2) {
+            } else if (ventana == 2) {  // VENTANA DE JUEGO
+                System.out.println("juego");
                 pantallaJuego(g);
+            } else if (ventana == 3) {  // VENTANA DE CREDITOS
+                System.out.println("creditos");
             }
         } else {
             //Da un mensaje mientras se carga el dibujo	
@@ -220,39 +232,52 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
      */
     public void keyReleased(KeyEvent e) {
         char k = e.getKeyChar();
-
+        
+        // SI SE ENCUENTRA EN LA PANTALLA DE PAUSA SE QUITA PRESIONANDO P
+        if (pausa) {
+            if (k == 'p'){
+                pausa = false;
+                return;
+            }
+        }
+        
         if (ventana == 1) {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_UP:
-                    if (indiceMenu == 3)
+                    if (indiceMenu == 3) {
                         indiceMenu = 1;
-                    else
+                    } else {
                         indiceMenu++;
+                    }
                     break;
                 case KeyEvent.VK_DOWN:
-                    if (indiceMenu == 1)
+                    if (indiceMenu == 1) {
                         indiceMenu = 3;
-                    else
+                    } else {
                         indiceMenu--;
+                    }
                     break;
                 case KeyEvent.VK_LEFT:
-                    if (indiceMenu == 1)
+                    if (indiceMenu == 1) {
                         indiceMenu = 3;
-                    else
+                    } else {
                         indiceMenu--;
+                    }
                     break;
                 case KeyEvent.VK_RIGHT:
-                    if (indiceMenu == 3)
+                    if (indiceMenu == 3) {
                         indiceMenu = 1;
-                    else
+                    } else {
                         indiceMenu++;
+                    }
                     break;
                 case KeyEvent.VK_ENTER:
+                    leerArchivo();
                     ventana = 2;
                     break;
             }
-            System.out.println(indiceMenu);
-            
+            //System.out.println(indiceMenu);
+            // CHEATS DE VENTANA DE JUEGO Y BOTON DE PAUSA 
         } else if (ventana == 2) {
             if (k == '1') {
                 vidas = 1;
@@ -266,6 +291,11 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
             if (k == '4') {
                 vidas = 4;
             }
+            if (k == 'p') {
+                pausa = true;
+                System.out.println(pausa);
+            }
+
         }
 
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -285,39 +315,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         int y = e.getY();
 
         if (ventana == 2) {
-            //////////////////////   SELECCION DE UNA OPCION    ////////////////////
-            // Opcion A
-            if (x > botona.getCoordX() && x < botona.getCoordX() + 55
-                    && y > botona.getCoordY() && y < botona.getCoordY() + 55) {
-                // Si opcion A era la respuesta correcta
-                if (!preguntas.get(indicePregunta).getRespuesta(0).isCorrecta()) {
-                    vidas--;
-                }
-            }
-            // Opcion B
-            if (x > botonb.getCoordX() && x < botonb.getCoordX() + 55
-                    && y > botonb.getCoordY() && y < botonb.getCoordY() + 55) {
-                // Si opcion B era la respuesta correcta
-                if (!preguntas.get(indicePregunta).getRespuesta(1).isCorrecta()) {
-                    vidas--;
-                }
-            }
-            // Opcion C
-            if (x > botonc.getCoordX() && x < botonc.getCoordX() + 55
-                    && y > botonc.getCoordY() && y < botonc.getCoordY() + 55) {
-                // Si opcion C era la respuesta correcta
-                if (!preguntas.get(indicePregunta).getRespuesta(2).isCorrecta()) {
-                    vidas--;
-                }
-            }
-            // Opcion D
-            if (x > botond.getCoordX() && x < botond.getCoordX() + 55
-                    && y > botond.getCoordY() && y < botond.getCoordY() + 55) {
-                // Si opcion D era la respuesta correcta
-                if (!preguntas.get(indicePregunta).getRespuesta(3).isCorrecta()) {
-                    vidas--;
-                }
-            }
+            clickOpcion(x, y);
         }
 
     }
@@ -351,55 +349,12 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
 
     }
 
-    public void asignacionImagenes() {
-        //Imagen de Background
-        URL bURL = this.getClass().getResource("images/fondo_1.png");
-        image_background = Toolkit.getDefaultToolkit().getImage(bURL);
-        bURL = this.getClass().getResource("images/titulo.png");
-        image_tituloPrincipal = Toolkit.getDefaultToolkit().getImage(bURL);
-        bURL = this.getClass().getResource("images/galileo.png");
-        image_galileo = Toolkit.getDefaultToolkit().getImage(bURL);
-        bURL = this.getClass().getResource("images/isaac.png");
-        image_isaac = Toolkit.getDefaultToolkit().getImage(bURL);
-        bURL = this.getClass().getResource("images/marie.png");
-        image_marie = Toolkit.getDefaultToolkit().getImage(bURL);
-        bURL = this.getClass().getResource("images/albert.png");
-        image_albert = Toolkit.getDefaultToolkit().getImage(bURL);
-        bURL = this.getClass().getResource("images/rectanguloPreguntas.png");
-        image_cuadroPreguntas = Toolkit.getDefaultToolkit().getImage(bURL);
-        bURL = this.getClass().getResource("images/botona.png");
-        image_aux = Toolkit.getDefaultToolkit().getImage(bURL);
-        botona = new Boton(image_aux, 665, 395);
-        bURL = this.getClass().getResource("images/botonb.png");
-        image_aux = Toolkit.getDefaultToolkit().getImage(bURL);
-        botonb = new Boton(image_aux, 665, 465);
-        bURL = this.getClass().getResource("images/botonc.png");
-        image_aux = Toolkit.getDefaultToolkit().getImage(bURL);
-        botonc = new Boton(image_aux, 665, 535);
-        bURL = this.getClass().getResource("images/botond.png");
-        image_aux = Toolkit.getDefaultToolkit().getImage(bURL);
-        botond = new Boton(image_aux, 665, 605);
-        bURL = this.getClass().getResource("images/mesa.png");
-        image_mesa = Toolkit.getDefaultToolkit().getImage(bURL);
-        bURL = this.getClass().getResource("images/mano.png");
-        image_mano = Toolkit.getDefaultToolkit().getImage(bURL);
-        bURL = this.getClass().getResource("images/flecha.png");
-        image_flecha = Toolkit.getDefaultToolkit().getImage(bURL);
-        bURL = this.getClass().getResource("images/tema1.png");
-        image_tema1 = Toolkit.getDefaultToolkit().getImage(bURL);
-        bURL = this.getClass().getResource("images/tema2.png");
-        image_tema2 = Toolkit.getDefaultToolkit().getImage(bURL);
-        bURL = this.getClass().getResource("images/tema3.png");
-        image_tema3 = Toolkit.getDefaultToolkit().getImage(bURL);
-
-    }
-
     public void leerArchivo() {
         preguntas = new ArrayList<Pregunta>(20);
         Pregunta newPregunta;
         ArrayList<Respuesta> respuestas = new ArrayList<Respuesta>(4);
         // The name of the file to open.
-        String fileName = "src/salvaAlCientifico/docs/Preguntas.txt";
+        String fileName = "src/salvaAlCientifico/docs/Preguntas" + indiceMenu + ".txt";
 
         // This will reference one line at a time
         String line = null;
@@ -414,18 +369,18 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
             while ((line = bufferedReader.readLine()) != null) {
                 respuestas.clear();
                 newPregunta = new Pregunta(line);
-                System.out.println(line);
+                //System.out.println(line);
                 line = bufferedReader.readLine();
-                System.out.println(line);
+                //System.out.println(line);
                 respuestas.add(new Respuesta(line, true));
                 line = bufferedReader.readLine();
-                System.out.println(line);
+                //System.out.println(line);
                 respuestas.add(new Respuesta(line, false));
                 line = bufferedReader.readLine();
-                System.out.println(line);
+                //System.out.println(line);
                 respuestas.add(new Respuesta(line, false));
                 line = bufferedReader.readLine();
-                System.out.println(line);
+                //System.out.println(line);
                 respuestas.add(new Respuesta(line, false));
 
                 long seed = System.nanoTime();
@@ -513,17 +468,23 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
                 break;
             case 3:
                 coordManos = 180;
+                g.drawImage(image_puff, 20, 480, this);
                 g.drawImage(image_marie, 180, 480, this);
                 g.drawImage(image_isaac, 330, 480, this);
                 g.drawImage(image_galileo, 510, 480, this);
                 break;
             case 2:
                 coordManos = 330;
+                g.drawImage(image_puff, 20, 480, this);
+                g.drawImage(image_puff, 180, 480, this);
                 g.drawImage(image_isaac, 330, 480, this);
                 g.drawImage(image_galileo, 510, 480, this);
                 break;
             case 1:
                 coordManos = 510;
+                g.drawImage(image_puff, 20, 480, this);
+                g.drawImage(image_puff, 180, 480, this);
+                g.drawImage(image_puff, 330, 480, this);
                 g.drawImage(image_galileo, 510, 480, this);
                 break;
         }
@@ -537,20 +498,123 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     }
 
     public void pantallaMenu(Graphics g) {
-        
+
         g.drawImage(image_tema1, 230, 250, this);
         g.drawImage(image_tema2, 330, 400, this);
         g.drawImage(image_tema3, 430, 550, this);
-        
-        if (indiceMenu == 1){
+
+        if (indiceMenu == 1) {
             g.drawImage(image_flecha, 120, 250, this);
-        } else if (indiceMenu == 2){
+        } else if (indiceMenu == 2) {
             g.drawImage(image_flecha, 220, 400, this);
-        } else if (indiceMenu == 3){
+        } else if (indiceMenu == 3) {
             g.drawImage(image_flecha, 310, 550, this);
         }
-        
-            
+
+    }
+
+    public void clickOpcion(int x, int y) {
+        //////////////////////   SELECCION DE UNA OPCION    ////////////////////
+        // Opcion A
+        if (x > botona.getCoordX() && x < botona.getCoordX() + 55
+                && y > botona.getCoordY() && y < botona.getCoordY() + 55) {
+            // Si opcion A era la respuesta correcta
+            if (!preguntas.get(indicePregunta).getRespuesta(0).isCorrecta()) {
+                vidas--;
+                nextPregunta();
+            }
+        }
+        // Opcion B
+        if (x > botonb.getCoordX() && x < botonb.getCoordX() + 55
+                && y > botonb.getCoordY() && y < botonb.getCoordY() + 55) {
+            // Si opcion B era la respuesta correcta
+            if (!preguntas.get(indicePregunta).getRespuesta(1).isCorrecta()) {
+                vidas--;
+                nextPregunta();
+            }
+        }
+        // Opcion C
+        if (x > botonc.getCoordX() && x < botonc.getCoordX() + 55
+                && y > botonc.getCoordY() && y < botonc.getCoordY() + 55) {
+            // Si opcion C era la respuesta correcta
+            if (!preguntas.get(indicePregunta).getRespuesta(2).isCorrecta()) {
+                vidas--;
+                nextPregunta();
+            }
+        }
+        // Opcion D
+        if (x > botond.getCoordX() && x < botond.getCoordX() + 55
+                && y > botond.getCoordY() && y < botond.getCoordY() + 55) {
+            // Si opcion D era la respuesta correcta
+            if (!preguntas.get(indicePregunta).getRespuesta(3).isCorrecta()) {
+                vidas--;
+                nextPregunta();
+            }
+        }
+    }
+
+    public void nextPregunta() {
+        if (indicePregunta == 19) {
+            //gameOver = true;
+        } else {
+            indicePregunta++;
+        }
+    }
+
+    public void pantallaPausa(Graphics g) {
+
+        // PAUSA AL RELOJ
+        g.drawImage(image_pausa, ANCHO / 2 - 250, ALTO / 2 - 50, this);
+        g.drawImage(image_salir, 900, 600, this);
+    }
+
+    public void asignacionImagenes() {
+        //Imagen de Background
+        URL bURL = this.getClass().getResource("images/fondo_1.png");
+        image_background = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/titulo.png");
+        image_tituloPrincipal = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/galileo.png");
+        image_galileo = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/isaac.png");
+        image_isaac = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/marie.png");
+        image_marie = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/albert.png");
+        image_albert = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/rectanguloPreguntas.png");
+        image_cuadroPreguntas = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/botona.png");
+        image_aux = Toolkit.getDefaultToolkit().getImage(bURL);
+        botona = new Boton(image_aux, 665, 395);
+        bURL = this.getClass().getResource("images/botonb.png");
+        image_aux = Toolkit.getDefaultToolkit().getImage(bURL);
+        botonb = new Boton(image_aux, 665, 465);
+        bURL = this.getClass().getResource("images/botonc.png");
+        image_aux = Toolkit.getDefaultToolkit().getImage(bURL);
+        botonc = new Boton(image_aux, 665, 535);
+        bURL = this.getClass().getResource("images/botond.png");
+        image_aux = Toolkit.getDefaultToolkit().getImage(bURL);
+        botond = new Boton(image_aux, 665, 605);
+        bURL = this.getClass().getResource("images/mesa.png");
+        image_mesa = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/mano.png");
+        image_mano = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/flecha.png");
+        image_flecha = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/tema1.png");
+        image_tema1 = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/tema2.png");
+        image_tema2 = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/tema3.png");
+        image_tema3 = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/puff.png");
+        image_puff = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/pausa.png");
+        image_pausa = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/salirDelJuego.png");
+        image_salir = Toolkit.getDefaultToolkit().getImage(bURL);
+
     }
 }
 
