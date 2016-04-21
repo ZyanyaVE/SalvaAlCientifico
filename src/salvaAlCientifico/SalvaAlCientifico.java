@@ -573,6 +573,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         // La seleccion de alguna pregunta fue equivocada
         if (respuestaEquivocada){
             vidas--;
+            respuestaEquivocada = false;
             jugadorActual.respuestaEquivocada();
             nextPregunta();
         }
