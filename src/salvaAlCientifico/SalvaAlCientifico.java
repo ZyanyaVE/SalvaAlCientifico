@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Timer;
 import javax.swing.JFrame;
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -43,17 +44,22 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     private int ventana = 1;
     private int vidas = 4;
     private int coordManos;
-    private int indicePregunta = 10;    // 0 - 19
+    private int indicePregunta = 0;    // 0 - 19
     private int indiceMenu = 1;         // 1 - 3
-    private boolean pausa = false;
-    private boolean menuActivo = true;
-    private boolean gameOver = false;
-    private Boton botona;
-    private Boton botonb;
-    private Boton botonc;
-    private Boton botond;
+    private boolean pausa;
+    private boolean menuActivo;
+    private boolean gameOver;
+    private boolean pregunta_timeOut;
+    private Boton boton_a;
+    private Boton boton_b;
+    private Boton boton_c;
+    private Boton boton_d; 
+    private Boton boton_salirPausa;
+    private Boton boton_volverPausa;
+    private Boton boton_volverMenu;
     ArrayList<Integer> numbers;
     ArrayList<Pregunta> preguntas;
+    private Jugador jugadorActual;
 
     //////////////////////////// Objetos ////////////////////////////////
     private Image dbImage;                          // Imagen a proyectar
@@ -73,9 +79,15 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     private Image image_tema3;
     private Image image_puff;
     private Image image_pausa;
-    private Image image_salir;
+    private Image image_salirPausa;
+    private Image image_volverPausa;
+    private Image image_ganaste;
+    private Image image_perdiste;
+    private Image image_resumen;
+    private Image image_volverMenu;
     private Graphics dbg;                           // Objeto grafico
     private long tiempoActual;                      // Tiempo Actual
+    private Timer tiempo;
 
     /**
      * Metodo <I>init</I> sobrescrito de la clase <code>Applet</code>.<P>
@@ -83,6 +95,10 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
      * usarse en el <code>Applet</code> y se definen funcionalidades.
      */
     public SalvaAlCientifico() {
+        // Metodo que permite asignar todas las imagenes a variables Image
+        asignacionImagenes();
+        setBackground(black);                              // Color de fondo del applet
+        setSize(ANCHO, ALTO);                               // Dimensiones del applet 
         reinicia();
 
         //Adds
@@ -105,10 +121,14 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
      */
     public void reinicia() {                        // Metodo que inicia el juego
         ////////////////////   Caracteristicas del Applet  ////////////////////
-        // Metodo que permite asignar todas las imagenes a variables Image
-        asignacionImagenes();
-        setBackground(black);                              // Color de fondo del applet
-        setSize(ANCHO, ALTO);                               // Dimensiones del applet  
+        ventana = 1;
+        vidas = 4;
+        indicePregunta = 10;    // 0 - 19
+        indiceMenu = 1;         // 1 - 3
+        pausa = false;
+        menuActivo = true;
+        gameOver = false;
+        jugadorActual = new Jugador();
     }
 
     /**
@@ -184,24 +204,27 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
      */
     public void paint1(Graphics g) {
         if (image_background != null) {
-            // Paint de la imagen de fondo
-            g.drawImage(image_background, 0, 0, ANCHO, ALTO, this);
-            g.drawImage(image_tituloPrincipal, 15, 40, this);
 
+            g.drawImage(image_background, 0, 0, ANCHO, ALTO, this);
+            if (!gameOver) {
+                g.drawImage(image_tituloPrincipal, 15, 40, this);
+            }
             // Ventana de Menu
             if (pausa) {
                 pantallaPausa(g);
-                System.out.println("pausa");
+                //System.out.println("pausa");
             } else if (gameOver) {
-                System.out.println("gameOver");
+                //System.out.println("gameOver");
+                pantallaGameOver(g);
+                ventana = 0;
             } else if (ventana == 1) {  // VENTANA DE MENU
-                System.out.println("menu");
+                //System.out.println("menu");
                 pantallaMenu(g);
             } else if (ventana == 2) {  // VENTANA DE JUEGO
-                System.out.println("juego");
+                //System.out.println("juego");
                 pantallaJuego(g);
             } else if (ventana == 3) {  // VENTANA DE CREDITOS
-                System.out.println("creditos");
+                //System.out.println("creditos");
             }
         } else {
             //Da un mensaje mientras se carga el dibujo	
@@ -232,15 +255,14 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
      */
     public void keyReleased(KeyEvent e) {
         char k = e.getKeyChar();
-        
+
         // SI SE ENCUENTRA EN LA PANTALLA DE PAUSA SE QUITA PRESIONANDO P
         if (pausa) {
-            if (k == 'p'){
+            if (k == 'p') {
                 pausa = false;
                 return;
             }
         }
-        
         if (ventana == 1) {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_UP:
@@ -314,8 +336,14 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         int x = e.getX();
         int y = e.getY();
 
+        if (gameOver) {
+            clicksPantallaGameOver(x, y);
+        }
         if (ventana == 2) {
-            clickOpcion(x, y);
+            clicksPantallaJuego(x, y);
+        }
+        if (pausa) {
+            clicksPantallaPausa(x, y);
         }
 
     }
@@ -442,19 +470,27 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         g.setFont(new Font("Courier New", Font.BOLD, 30));
 
         resp = preguntas.get(indicePregunta).getRespuesta(0).getRespuesta();
-        g.drawString(resp, botona.getCoordX() + 60, botona.getCoordY() + 35);
+        g.drawString(resp, boton_a.getCoordX() + 60, boton_a.getCoordY() + 35);
         resp = preguntas.get(indicePregunta).getRespuesta(1).getRespuesta();
-        g.drawString(resp, botonb.getCoordX() + 60, botonb.getCoordY() + 35);
+        g.drawString(resp, boton_b.getCoordX() + 60, boton_b.getCoordY() + 35);
         resp = preguntas.get(indicePregunta).getRespuesta(2).getRespuesta();
-        g.drawString(resp, botonc.getCoordX() + 60, botonc.getCoordY() + 35);
+        g.drawString(resp, boton_c.getCoordX() + 60, boton_c.getCoordY() + 35);
         resp = preguntas.get(indicePregunta).getRespuesta(3).getRespuesta();
-        g.drawString(resp, botond.getCoordX() + 60, botond.getCoordY() + 35);
+        g.drawString(resp, boton_d.getCoordX() + 60, boton_d.getCoordY() + 35);
     }
 
+    public void imprimeTiempo(Graphics g){
+        //g.drawString(tiempoActual, ALTO, ALTO);
+    }
+    
+    public void timer(){
+        
+    }
     public void pantallaJuego(Graphics g) {
         g.drawImage(image_mesa, 5, 683, this);
         imprimePregunta(g);
-
+        imprimeTiempo(g);
+        
         // Dependiendo de las vidas que le queden al usuario son los
         // científicos que se van a mostrar en pantalla, asignando tambien
         // una nueva coordenada en X a la mano
@@ -487,13 +523,16 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
                 g.drawImage(image_puff, 330, 480, this);
                 g.drawImage(image_galileo, 510, 480, this);
                 break;
+            case 0:
+                gameOver = true;
         }
         g.drawImage(image_mano, coordManos - 8, 250, this);
         g.drawImage(image_cuadroPreguntas, 625, 40, this);
-        g.drawImage(botona.getImagen(), botona.getCoordX(), botona.getCoordY(), this);
-        g.drawImage(botonb.getImagen(), botonb.getCoordX(), botonb.getCoordY(), this);
-        g.drawImage(botonc.getImagen(), botonc.getCoordX(), botonc.getCoordY(), this);
-        g.drawImage(botond.getImagen(), botond.getCoordX(), botond.getCoordY(), this);
+        g.drawImage(boton_a.getImagen(), boton_a.getCoordX(), boton_a.getCoordY(), this);
+        g.drawImage(boton_b.getImagen(), boton_b.getCoordX(), boton_b.getCoordY(), this);
+        g.drawImage(boton_c.getImagen(), boton_c.getCoordX(), boton_c.getCoordY(), this);
+        g.drawImage(boton_d.getImagen(), boton_d.getCoordX(), boton_d.getCoordY(), this);
+        
 
     }
 
@@ -513,44 +552,129 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
 
     }
 
-    public void clickOpcion(int x, int y) {
+    public void pantallaPausa(Graphics g) {
+
+        // PAUSA AL RELOJ
+        g.drawImage(image_pausa, ANCHO / 2 - 250, ALTO / 2 - 50, this);
+        g.drawImage(boton_salirPausa.getImagen(), boton_salirPausa.getCoordX(),
+                boton_salirPausa.getCoordY(), this);
+        g.drawImage(boton_volverPausa.getImagen(), boton_volverPausa.getCoordX(),
+                boton_volverPausa.getCoordY(), this);
+    }
+
+    public void pantallaGameOver(Graphics g) {
+        //if (ganado)
+        g.drawImage(image_ganaste, 15, 40, this);
+        // else (perdido)
+        g.drawImage(image_perdiste, 15, 40, this);
+        
+        
+        g.drawImage(image_resumen, 640, 200, this);
+        g.drawImage(boton_volverMenu.getImagen(), boton_volverMenu.getCoordX(),
+                boton_volverMenu.getCoordY(), this);
+    }
+
+    public void clicksPantallaJuego(int x, int y) {
         //////////////////////   SELECCION DE UNA OPCION    ////////////////////
         // Opcion A
-        if (x > botona.getCoordX() && x < botona.getCoordX() + 55
-                && y > botona.getCoordY() && y < botona.getCoordY() + 55) {
-            // Si opcion A era la respuesta correcta
-            if (!preguntas.get(indicePregunta).getRespuesta(0).isCorrecta()) {
+        if (x > boton_a.getCoordX() && x < boton_a.getCoordX() + 55
+                && y > boton_a.getCoordY() && y < boton_a.getCoordY() + 55) {
+            // Si opcion A era la respuesta incorrecta O SI SE ACABA EL TIEMPO
+            if (!preguntas.get(indicePregunta).getRespuesta(0).isCorrecta()) { 
                 vidas--;
-                nextPregunta();
+                
+                // Si no hubo timeout quiere decir que fue resp. incorrecta
+                if (!pregunta_timeOut){
+                   jugadorActual.respuestaEquivocada();
+                } else {
+                    jugadorActual.timeOut();
+                }
             }
+                nextPregunta();
         }
         // Opcion B
-        if (x > botonb.getCoordX() && x < botonb.getCoordX() + 55
-                && y > botonb.getCoordY() && y < botonb.getCoordY() + 55) {
-            // Si opcion B era la respuesta correcta
+        if (x > boton_b.getCoordX() && x < boton_b.getCoordX() + 55
+                && y > boton_b.getCoordY() && y < boton_b.getCoordY() + 55) {
+            // Si opcion B era la respuesta incorrecta O SI SE ACABA EL TIEMPO 
             if (!preguntas.get(indicePregunta).getRespuesta(1).isCorrecta()) {
+                
                 vidas--;
-                nextPregunta();
+                
+                // Si no hubo timeout quiere decir que fue resp. incorrecta
+                if (!pregunta_timeOut){
+                   jugadorActual.respuestaEquivocada();
+                } else {
+                    jugadorActual.timeOut();
+                }
             }
+                nextPregunta();
         }
         // Opcion C
-        if (x > botonc.getCoordX() && x < botonc.getCoordX() + 55
-                && y > botonc.getCoordY() && y < botonc.getCoordY() + 55) {
-            // Si opcion C era la respuesta correcta
+        if (x > boton_c.getCoordX() && x < boton_c.getCoordX() + 55
+                && y > boton_c.getCoordY() && y < boton_c.getCoordY() + 55) {
+            // Si opcion C era la respuesta incorrecta O SI SE ACABA EL TIEMPO
             if (!preguntas.get(indicePregunta).getRespuesta(2).isCorrecta()) {
+                
                 vidas--;
-                nextPregunta();
+                
+                // Si no hubo timeout quiere decir que fue resp. incorrecta
+                if (!pregunta_timeOut){
+                   jugadorActual.respuestaEquivocada();
+                } else {
+                    jugadorActual.timeOut();
+                }
             }
+                nextPregunta();
         }
         // Opcion D
-        if (x > botond.getCoordX() && x < botond.getCoordX() + 55
-                && y > botond.getCoordY() && y < botond.getCoordY() + 55) {
-            // Si opcion D era la respuesta correcta
+        if (x > boton_d.getCoordX() && x < boton_d.getCoordX() + 55
+                && y > boton_d.getCoordY() && y < boton_d.getCoordY() + 55) {
+            // Si opcion D era la respuesta incorrecta O SI SE ACABA EL TIEMPO
             if (!preguntas.get(indicePregunta).getRespuesta(3).isCorrecta()) {
+                
                 vidas--;
-                nextPregunta();
+                
+                // Si no hubo timeout quiere decir que fue resp. incorrecta
+                if (!pregunta_timeOut){
+                   jugadorActual.respuestaEquivocada();
+                } else {
+                    jugadorActual.timeOut();
+                }
             }
+                nextPregunta();
         }
+    }
+
+    public void clicksPantallaPausa(int x, int y) {
+        // Click a volver al juego
+        if (x > boton_volverPausa.getCoordX() && x < boton_volverPausa.getCoordX() + 242
+                && y > boton_volverPausa.getCoordY() && y < boton_volverPausa.getCoordY() + 148) {
+
+            // VOLVER A CORRER EL RELOJ
+            pausa = false;
+
+        }
+
+        if (x > boton_salirPausa.getCoordX() && x < boton_salirPausa.getCoordX() + 242
+                && y > boton_salirPausa.getCoordY() && y < boton_salirPausa.getCoordY() + 148) {
+
+            // VOLVER A CORRER EL RELOJ
+            pausa = false;
+            gameOver = true;
+            ventana = 1;
+
+        }
+
+    }
+
+    public void clicksPantallaGameOver(int x, int y) {
+        System.out.println("click pantalla game over");
+            if (x > boton_volverMenu.getCoordX() && x < boton_volverMenu.getCoordX() + 200
+                && y > boton_volverMenu.getCoordY() && y < boton_volverMenu.getCoordY() + 124) {
+                System.out.println("VOLVER AL MENU Y REINICIAR");
+                reinicia();
+                
+            }
     }
 
     public void nextPregunta() {
@@ -561,15 +685,9 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         }
     }
 
-    public void pantallaPausa(Graphics g) {
-
-        // PAUSA AL RELOJ
-        g.drawImage(image_pausa, ANCHO / 2 - 250, ALTO / 2 - 50, this);
-        g.drawImage(image_salir, 900, 600, this);
-    }
-
     public void asignacionImagenes() {
-        //Imagen de Background
+        ////////////////////        IMAGENES         ///////////////////////
+        //Pantalla Juego
         URL bURL = this.getClass().getResource("images/fondo_1.png");
         image_background = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/titulo.png");
@@ -584,18 +702,6 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         image_albert = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/rectanguloPreguntas.png");
         image_cuadroPreguntas = Toolkit.getDefaultToolkit().getImage(bURL);
-        bURL = this.getClass().getResource("images/botona.png");
-        image_aux = Toolkit.getDefaultToolkit().getImage(bURL);
-        botona = new Boton(image_aux, 665, 395);
-        bURL = this.getClass().getResource("images/botonb.png");
-        image_aux = Toolkit.getDefaultToolkit().getImage(bURL);
-        botonb = new Boton(image_aux, 665, 465);
-        bURL = this.getClass().getResource("images/botonc.png");
-        image_aux = Toolkit.getDefaultToolkit().getImage(bURL);
-        botonc = new Boton(image_aux, 665, 535);
-        bURL = this.getClass().getResource("images/botond.png");
-        image_aux = Toolkit.getDefaultToolkit().getImage(bURL);
-        botond = new Boton(image_aux, 665, 605);
         bURL = this.getClass().getResource("images/mesa.png");
         image_mesa = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/mano.png");
@@ -612,8 +718,39 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         image_puff = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/pausa.png");
         image_pausa = Toolkit.getDefaultToolkit().getImage(bURL);
+        // Pantalla Game Over
+        bURL = this.getClass().getResource("images/ganaste.png");
+        image_ganaste = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/perdiste.png");
+        image_perdiste = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/resumen.png");
+        image_resumen = Toolkit.getDefaultToolkit().getImage(bURL);
+        
+
+        ///////////////////////     Botones     //////////////////////////
+        bURL = this.getClass().getResource("images/botona.png");
+        image_aux = Toolkit.getDefaultToolkit().getImage(bURL);
+        boton_a = new Boton(image_aux, 665, 395);
+        bURL = this.getClass().getResource("images/botonb.png");
+        image_aux = Toolkit.getDefaultToolkit().getImage(bURL);
+        boton_b = new Boton(image_aux, 665, 465);
+        bURL = this.getClass().getResource("images/botonc.png");
+        image_aux = Toolkit.getDefaultToolkit().getImage(bURL);
+        boton_c = new Boton(image_aux, 665, 535);
+        bURL = this.getClass().getResource("images/botond.png");
+        image_aux = Toolkit.getDefaultToolkit().getImage(bURL);
+        boton_d = new Boton(image_aux, 665, 605);
+        ///// Pantalla Pausa 
         bURL = this.getClass().getResource("images/salirDelJuego.png");
-        image_salir = Toolkit.getDefaultToolkit().getImage(bURL);
+        image_salirPausa = Toolkit.getDefaultToolkit().getImage(bURL);
+        boton_salirPausa = new Boton(image_salirPausa, 850, 560);
+        bURL = this.getClass().getResource("images/volverAlJuego.png");
+        image_volverPausa = Toolkit.getDefaultToolkit().getImage(bURL);
+        boton_volverPausa = new Boton(image_volverPausa, 10, 560);
+        //// Pantalla Game Over //////////
+        bURL = this.getClass().getResource("images/volverMenu.png");
+        image_volverMenu = Toolkit.getDefaultToolkit().getImage(bURL);
+        boton_volverMenu = new Boton(image_volverMenu, 10, 560);
 
     }
 }

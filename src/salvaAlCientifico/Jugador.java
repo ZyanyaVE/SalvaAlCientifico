@@ -11,7 +11,7 @@ package salvaAlCientifico;
  */
 public class Jugador {
     private int puntaje = 0;
-    private int preguntasAcertadas = 0;
+    private int preguntasEquivocadas = 0;
     private int timeouts = 0;
 
     public Jugador() {
@@ -25,14 +25,21 @@ public class Jugador {
         this.puntaje = puntaje;
     }
 
-    public int getPreguntasAcertadas() {
-        return preguntasAcertadas;
+    public int getPreguntasEquivocadas() {
+        return preguntasEquivocadas;
     }
 
-    public void setPreguntasAcertadas(int preguntasAcertadas) {
-        this.preguntasAcertadas = preguntasAcertadas;
+    public void setPreguntasEquivocadas(int preguntasEquivocadas) {
+        this.preguntasEquivocadas = preguntasEquivocadas;
     }
 
+    public void respuestaEquivocada(){
+        preguntasEquivocadas++;
+    }
+    
+    public void timeOut(){
+        timeouts++;
+    }
     public int getTimeouts() {
         return timeouts;
     }
