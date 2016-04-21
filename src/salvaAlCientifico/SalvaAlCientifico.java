@@ -13,6 +13,8 @@ import java.awt.Image;
 import static java.awt.Color.black;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -31,11 +33,11 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.Timer;
 import javax.swing.JFrame;
 import static javax.swing.JOptionPane.showMessageDialog;
+import javax.swing.Timer;
 
-public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, MouseListener, MouseMotionListener {
+public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, MouseListener, MouseMotionListener, ActionListener {
 
     ////////////////  Variables de Control sobre el Juego /////////////////////
     static final int ANCHO = 1100;                  // Ancho del applet
@@ -46,20 +48,24 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     private int coordManos;
     private int indicePregunta = 0;    // 0 - 19
     private int indiceMenu = 1;         // 1 - 3
+    private int contadorTiempo;
     private boolean pausa;
     private boolean menuActivo;
     private boolean gameOver;
     private boolean pregunta_timeOut;
+    private boolean interrupcionJuego;
+    boolean respuestaEquivocada;
     private Boton boton_a;
     private Boton boton_b;
     private Boton boton_c;
-    private Boton boton_d; 
+    private Boton boton_d;
     private Boton boton_salirPausa;
     private Boton boton_volverPausa;
     private Boton boton_volverMenu;
     ArrayList<Integer> numbers;
     ArrayList<Pregunta> preguntas;
     private Jugador jugadorActual;
+    private Timer timer;
 
     //////////////////////////// Objetos ////////////////////////////////
     private Image dbImage;                          // Imagen a proyectar
@@ -87,7 +93,6 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     private Image image_volverMenu;
     private Graphics dbg;                           // Objeto grafico
     private long tiempoActual;                      // Tiempo Actual
-    private Timer tiempo;
 
     /**
      * Metodo <I>init</I> sobrescrito de la clase <code>Applet</code>.<P>
@@ -129,6 +134,9 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         menuActivo = true;
         gameOver = false;
         jugadorActual = new Jugador();
+        contadorTiempo = 20;
+        interrupcionJuego = false;
+        timer();
     }
 
     /**
@@ -204,6 +212,12 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
      */
     public void paint1(Graphics g) {
         if (image_background != null) {
+
+            String aux = String.valueOf(tiempoActual);
+            g.setColor(Color.BLACK);
+            g.setFont(new Font("Courier New", Font.BOLD, 38));
+            g.drawString(aux, 5, 5);
+            //System.out.println(tiempoActual);
 
             g.drawImage(image_background, 0, 0, ANCHO, ALTO, this);
             if (!gameOver) {
@@ -479,18 +493,40 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         g.drawString(resp, boton_d.getCoordX() + 60, boton_d.getCoordY() + 35);
     }
 
-    public void imprimeTiempo(Graphics g){
-        //g.drawString(tiempoActual, ALTO, ALTO);
+    public void imprimeTiempo(Graphics g) {
+        timer.start();
+
+        // Especificaciones para los fonts que se utilzaran y los tamanos
+        if (contadorTiempo > 5) {
+            g.setColor(Color.BLACK);
+        } else {
+            g.setColor(Color.RED);
+        }
+        g.setFont(new Font("Courier New", Font.BOLD, 30));
+        g.drawString(String.valueOf(contadorTiempo), 1050, 690);
+
     }
-    
-    public void timer(){
-        
+
+    public void timer() {
+        timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                contadorTiempo--;
+                
+                if (contadorTiempo <= 0){
+                    pregunta_timeOut = true;
+                    timer.stop();
+                    contadorTiempo = 20;
+                }
+            }
+        });
     }
+
     public void pantallaJuego(Graphics g) {
         g.drawImage(image_mesa, 5, 683, this);
         imprimePregunta(g);
         imprimeTiempo(g);
-        
+
         // Dependiendo de las vidas que le queden al usuario son los
         // científicos que se van a mostrar en pantalla, asignando tambien
         // una nueva coordenada en X a la mano
@@ -533,6 +569,19 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         g.drawImage(boton_c.getImagen(), boton_c.getCoordX(), boton_c.getCoordY(), this);
         g.drawImage(boton_d.getImagen(), boton_d.getCoordX(), boton_d.getCoordY(), this);
         
+        
+        // La seleccion de alguna pregunta fue equivocada
+        if (respuestaEquivocada){
+            vidas--;
+            jugadorActual.respuestaEquivocada();
+            nextPregunta();
+        }
+        if (pregunta_timeOut){
+            vidas--;
+            jugadorActual.timeOut();
+            pregunta_timeOut = false;
+            nextPregunta();
+        }
 
     }
 
@@ -554,7 +603,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
 
     public void pantallaPausa(Graphics g) {
 
-        // PAUSA AL RELOJ
+        timer.stop();
         g.drawImage(image_pausa, ANCHO / 2 - 250, ALTO / 2 - 50, this);
         g.drawImage(boton_salirPausa.getImagen(), boton_salirPausa.getCoordX(),
                 boton_salirPausa.getCoordY(), this);
@@ -563,126 +612,90 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     }
 
     public void pantallaGameOver(Graphics g) {
-        //if (ganado)
-        g.drawImage(image_ganaste, 15, 40, this);
-        // else (perdido)
-        g.drawImage(image_perdiste, 15, 40, this);
-        
-        
+        // Si se perdió o se eligió terminar el juego antes
+        if (vidas <= 0 || interrupcionJuego){
+            g.drawImage(image_perdiste, 15, 40, this);
+        } else{ // Se ganó el juego
+            g.drawImage(image_ganaste, 15, 40, this);
+        }
+
         g.drawImage(image_resumen, 640, 200, this);
         g.drawImage(boton_volverMenu.getImagen(), boton_volverMenu.getCoordX(),
                 boton_volverMenu.getCoordY(), this);
     }
 
     public void clicksPantallaJuego(int x, int y) {
+        respuestaEquivocada = false;
         //////////////////////   SELECCION DE UNA OPCION    ////////////////////
         // Opcion A
         if (x > boton_a.getCoordX() && x < boton_a.getCoordX() + 55
                 && y > boton_a.getCoordY() && y < boton_a.getCoordY() + 55) {
-            // Si opcion A era la respuesta incorrecta O SI SE ACABA EL TIEMPO
-            if (!preguntas.get(indicePregunta).getRespuesta(0).isCorrecta()) { 
-                vidas--;
-                
-                // Si no hubo timeout quiere decir que fue resp. incorrecta
-                if (!pregunta_timeOut){
-                   jugadorActual.respuestaEquivocada();
-                } else {
-                    jugadorActual.timeOut();
-                }
+            // Si opcion A era la respuesta incorrecta
+            if (!preguntas.get(indicePregunta).getRespuesta(0).isCorrecta()) {
+                respuestaEquivocada = true;
             }
-                nextPregunta();
         }
         // Opcion B
         if (x > boton_b.getCoordX() && x < boton_b.getCoordX() + 55
                 && y > boton_b.getCoordY() && y < boton_b.getCoordY() + 55) {
-            // Si opcion B era la respuesta incorrecta O SI SE ACABA EL TIEMPO 
+            // Si opcion B era la respuesta incorrecta
             if (!preguntas.get(indicePregunta).getRespuesta(1).isCorrecta()) {
-                
-                vidas--;
-                
-                // Si no hubo timeout quiere decir que fue resp. incorrecta
-                if (!pregunta_timeOut){
-                   jugadorActual.respuestaEquivocada();
-                } else {
-                    jugadorActual.timeOut();
-                }
+                respuestaEquivocada = true;
             }
-                nextPregunta();
         }
         // Opcion C
         if (x > boton_c.getCoordX() && x < boton_c.getCoordX() + 55
                 && y > boton_c.getCoordY() && y < boton_c.getCoordY() + 55) {
-            // Si opcion C era la respuesta incorrecta O SI SE ACABA EL TIEMPO
+            // Si opcion C era la respuesta incorrecta
             if (!preguntas.get(indicePregunta).getRespuesta(2).isCorrecta()) {
-                
-                vidas--;
-                
-                // Si no hubo timeout quiere decir que fue resp. incorrecta
-                if (!pregunta_timeOut){
-                   jugadorActual.respuestaEquivocada();
-                } else {
-                    jugadorActual.timeOut();
-                }
+                respuestaEquivocada = true;
             }
-                nextPregunta();
         }
         // Opcion D
         if (x > boton_d.getCoordX() && x < boton_d.getCoordX() + 55
                 && y > boton_d.getCoordY() && y < boton_d.getCoordY() + 55) {
-            // Si opcion D era la respuesta incorrecta O SI SE ACABA EL TIEMPO
+            // Si opcion D era la respuesta incorrecta
             if (!preguntas.get(indicePregunta).getRespuesta(3).isCorrecta()) {
-                
-                vidas--;
-                
-                // Si no hubo timeout quiere decir que fue resp. incorrecta
-                if (!pregunta_timeOut){
-                   jugadorActual.respuestaEquivocada();
-                } else {
-                    jugadorActual.timeOut();
-                }
+                respuestaEquivocada = true;
             }
-                nextPregunta();
+
         }
+
     }
 
     public void clicksPantallaPausa(int x, int y) {
         // Click a volver al juego
         if (x > boton_volverPausa.getCoordX() && x < boton_volverPausa.getCoordX() + 242
                 && y > boton_volverPausa.getCoordY() && y < boton_volverPausa.getCoordY() + 148) {
-
-            // VOLVER A CORRER EL RELOJ
+            timer.start();
             pausa = false;
-
         }
 
         if (x > boton_salirPausa.getCoordX() && x < boton_salirPausa.getCoordX() + 242
                 && y > boton_salirPausa.getCoordY() && y < boton_salirPausa.getCoordY() + 148) {
-
-            // VOLVER A CORRER EL RELOJ
             pausa = false;
             gameOver = true;
+            interrupcionJuego = true;
             ventana = 1;
-
         }
-
     }
 
     public void clicksPantallaGameOver(int x, int y) {
         System.out.println("click pantalla game over");
-            if (x > boton_volverMenu.getCoordX() && x < boton_volverMenu.getCoordX() + 200
+        if (x > boton_volverMenu.getCoordX() && x < boton_volverMenu.getCoordX() + 200
                 && y > boton_volverMenu.getCoordY() && y < boton_volverMenu.getCoordY() + 124) {
-                System.out.println("VOLVER AL MENU Y REINICIAR");
-                reinicia();
-                
-            }
+            System.out.println("VOLVER AL MENU Y REINICIAR");
+            reinicia();
+        }
     }
 
     public void nextPregunta() {
         if (indicePregunta == 19) {
-            //gameOver = true;
+            gameOver = true;
         } else {
             indicePregunta++;
         }
+        timer.start();
     }
 
     public void asignacionImagenes() {
@@ -725,7 +738,6 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         image_perdiste = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/resumen.png");
         image_resumen = Toolkit.getDefaultToolkit().getImage(bURL);
-        
 
         ///////////////////////     Botones     //////////////////////////
         bURL = this.getClass().getResource("images/botona.png");
@@ -752,6 +764,11 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         image_volverMenu = Toolkit.getDefaultToolkit().getImage(bURL);
         boton_volverMenu = new Boton(image_volverMenu, 10, 560);
 
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
 
