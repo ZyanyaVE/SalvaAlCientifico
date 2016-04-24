@@ -37,6 +37,10 @@ public class Jugador {
         preguntasEquivocadas++;
     }
     
+    public void respuestaCorrecta(){
+        puntaje += 10;
+    }
+    
     public void timeOut(){
         timeouts++;
     }

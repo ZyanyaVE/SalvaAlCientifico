@@ -45,15 +45,18 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     private int score;                              // Score del jugador
     private int ventana = 1;
     private int vidas = 4;
-    private int coordManos;
+    private int coordManosX;
+    private int coordManosY;
     private int indicePregunta = 0;    // 0 - 19
     private int indiceMenu = 1;         // 1 - 3
     private int contadorTiempo;
+    private int distanciaCaidaMano = 0;
     private boolean pausa;
     private boolean menuActivo;
     private boolean gameOver;
     private boolean pregunta_timeOut;
     private boolean interrupcionJuego;
+    private boolean instrucciones;
     boolean respuestaEquivocada;
     private Boton boton_a;
     private Boton boton_b;
@@ -91,6 +94,11 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     private Image image_perdiste;
     private Image image_resumen;
     private Image image_volverMenu;
+    private Image image_instruccionenter;
+    private Image image_instruccionrespuesta;
+    private Image image_instruccionsustancia;
+    private Image image_instruccionpausa;
+    private Image image_fondoInstrucciones;
     private Graphics dbg;                           // Objeto grafico
     private long tiempoActual;                      // Tiempo Actual
 
@@ -128,7 +136,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         ////////////////////   Caracteristicas del Applet  ////////////////////
         ventana = 1;
         vidas = 4;
-        indicePregunta = 10;    // 0 - 19
+        indicePregunta = 0;    // 0 - 19
         indiceMenu = 1;         // 1 - 3
         pausa = false;
         menuActivo = true;
@@ -136,7 +144,9 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         jugadorActual = new Jugador();
         contadorTiempo = 20;
         interrupcionJuego = false;
-        timer();
+        coordManosY = 177;
+        instrucciones = false;
+        timerJuego();
     }
 
     /**
@@ -219,9 +229,11 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
             g.drawString(aux, 5, 5);
             //System.out.println(tiempoActual);
 
-            g.drawImage(image_background, 0, 0, ANCHO, ALTO, this);
-            if (!gameOver) {
-                g.drawImage(image_tituloPrincipal, 15, 40, this);
+            if (!instrucciones) {
+                g.drawImage(image_background, 0, 0, ANCHO, ALTO, this);
+                if (!gameOver) {
+                    g.drawImage(image_tituloPrincipal, 15, 40, this);
+                }
             }
             // Ventana de Menu
             if (pausa) {
@@ -230,13 +242,17 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
             } else if (gameOver) {
                 //System.out.println("gameOver");
                 pantallaGameOver(g);
+                timer.stop();
                 ventana = 0;
             } else if (ventana == 1) {  // VENTANA DE MENU
                 //System.out.println("menu");
                 pantallaMenu(g);
             } else if (ventana == 2) {  // VENTANA DE JUEGO
                 //System.out.println("juego");
-                pantallaJuego(g);
+                if (!instrucciones)
+                    pantallaJuego(g);
+                else
+                    pantallaInstrucciones(g);
             } else if (ventana == 3) {  // VENTANA DE CREDITOS
                 //System.out.println("creditos");
             }
@@ -280,17 +296,17 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         if (ventana == 1) {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_UP:
-                    if (indiceMenu == 3) {
-                        indiceMenu = 1;
-                    } else {
-                        indiceMenu++;
-                    }
-                    break;
-                case KeyEvent.VK_DOWN:
                     if (indiceMenu == 1) {
                         indiceMenu = 3;
                     } else {
                         indiceMenu--;
+                    }
+                    break;
+                case KeyEvent.VK_DOWN:
+                    if (indiceMenu == 3) {
+                        indiceMenu = 1;
+                    } else {
+                        indiceMenu++;
                     }
                     break;
                 case KeyEvent.VK_LEFT:
@@ -310,11 +326,17 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
                 case KeyEvent.VK_ENTER:
                     leerArchivo();
                     ventana = 2;
+                    instrucciones = true;
                     break;
             }
             //System.out.println(indiceMenu);
             // CHEATS DE VENTANA DE JUEGO Y BOTON DE PAUSA 
         } else if (ventana == 2) {
+            if (instrucciones) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    instrucciones = false;
+                }
+            }
             if (k == '1') {
                 vidas = 1;
             }
@@ -327,7 +349,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
             if (k == '4') {
                 vidas = 4;
             }
-            if (k == 'p') {
+            if (k == 'p' && !instrucciones) {
                 pausa = true;
                 System.out.println(pausa);
             }
@@ -481,16 +503,16 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
 
         // Especificaciones para los fonts que se utilzaran y los tamanos
         g.setColor(Color.BLACK);
-        g.setFont(new Font("Courier New", Font.BOLD, 30));
+        g.setFont(new Font("Courier New", Font.BOLD, 17));
 
         resp = preguntas.get(indicePregunta).getRespuesta(0).getRespuesta();
-        g.drawString(resp, boton_a.getCoordX() + 60, boton_a.getCoordY() + 35);
+        g.drawString(resp, boton_a.getCoordX() + 60, boton_a.getCoordY() + 25);
         resp = preguntas.get(indicePregunta).getRespuesta(1).getRespuesta();
-        g.drawString(resp, boton_b.getCoordX() + 60, boton_b.getCoordY() + 35);
+        g.drawString(resp, boton_b.getCoordX() + 60, boton_b.getCoordY() + 25);
         resp = preguntas.get(indicePregunta).getRespuesta(2).getRespuesta();
-        g.drawString(resp, boton_c.getCoordX() + 60, boton_c.getCoordY() + 35);
+        g.drawString(resp, boton_c.getCoordX() + 60, boton_c.getCoordY() + 25);
         resp = preguntas.get(indicePregunta).getRespuesta(3).getRespuesta();
-        g.drawString(resp, boton_d.getCoordX() + 60, boton_d.getCoordY() + 35);
+        g.drawString(resp, boton_d.getCoordX() + 60, boton_d.getCoordY() + 25);
     }
 
     public void imprimeTiempo(Graphics g) {
@@ -507,13 +529,13 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
 
     }
 
-    public void timer() {
+    public void timerJuego() {
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 contadorTiempo--;
-                
-                if (contadorTiempo <= 0){
+                coordManosY += 10;
+                if (contadorTiempo <= 0) {
                     pregunta_timeOut = true;
                     timer.stop();
                     contadorTiempo = 20;
@@ -532,28 +554,28 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         // una nueva coordenada en X a la mano
         switch (vidas) {
             case 4:
-                coordManos = 20;
+                coordManosX = 20;
                 g.drawImage(image_albert, 20, 480, this);
                 g.drawImage(image_marie, 180, 480, this);
                 g.drawImage(image_isaac, 330, 480, this);
                 g.drawImage(image_galileo, 510, 480, this);
                 break;
             case 3:
-                coordManos = 180;
+                coordManosX = 180;
                 g.drawImage(image_puff, 20, 480, this);
                 g.drawImage(image_marie, 180, 480, this);
                 g.drawImage(image_isaac, 330, 480, this);
                 g.drawImage(image_galileo, 510, 480, this);
                 break;
             case 2:
-                coordManos = 330;
+                coordManosX = 330;
                 g.drawImage(image_puff, 20, 480, this);
                 g.drawImage(image_puff, 180, 480, this);
                 g.drawImage(image_isaac, 330, 480, this);
                 g.drawImage(image_galileo, 510, 480, this);
                 break;
             case 1:
-                coordManos = 510;
+                coordManosX = 510;
                 g.drawImage(image_puff, 20, 480, this);
                 g.drawImage(image_puff, 180, 480, this);
                 g.drawImage(image_puff, 330, 480, this);
@@ -562,26 +584,23 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
             case 0:
                 gameOver = true;
         }
-        g.drawImage(image_mano, coordManos - 8, 250, this);
-        g.drawImage(image_cuadroPreguntas, 625, 40, this);
+        // Dibuja las manos y el cuadro que contiene las repuestas
+        g.drawImage(image_mano, coordManosX - 8, coordManosY, this);
+        //g.drawImage(image_cuadroPreguntas, 625, 40, this);
+        // Dibuja los botones de las respuestas
         g.drawImage(boton_a.getImagen(), boton_a.getCoordX(), boton_a.getCoordY(), this);
         g.drawImage(boton_b.getImagen(), boton_b.getCoordX(), boton_b.getCoordY(), this);
         g.drawImage(boton_c.getImagen(), boton_c.getCoordX(), boton_c.getCoordY(), this);
         g.drawImage(boton_d.getImagen(), boton_d.getCoordX(), boton_d.getCoordY(), this);
-        
-        
-        // La seleccion de alguna pregunta fue equivocada
-        if (respuestaEquivocada){
-            vidas--;
-            respuestaEquivocada = false;
-            jugadorActual.respuestaEquivocada();
-            nextPregunta();
-        }
-        if (pregunta_timeOut){
+
+        // Si se acabo el tiempo de alguna pregunta y resulta en timeout
+        if (pregunta_timeOut) {
             vidas--;
             jugadorActual.timeOut();
             pregunta_timeOut = false;
+            coordManosY = 177;
             nextPregunta();
+
         }
 
     }
@@ -589,15 +608,15 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     public void pantallaMenu(Graphics g) {
 
         g.drawImage(image_tema1, 230, 250, this);
-        g.drawImage(image_tema2, 330, 400, this);
-        g.drawImage(image_tema3, 430, 550, this);
+        g.drawImage(image_tema2, 380, 400, this);
+        g.drawImage(image_tema3, 540, 550, this);
 
         if (indiceMenu == 1) {
             g.drawImage(image_flecha, 120, 250, this);
         } else if (indiceMenu == 2) {
-            g.drawImage(image_flecha, 220, 400, this);
+            g.drawImage(image_flecha, 260, 400, this);
         } else if (indiceMenu == 3) {
-            g.drawImage(image_flecha, 310, 550, this);
+            g.drawImage(image_flecha, 420, 550, this);
         }
 
     }
@@ -614,52 +633,92 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
 
     public void pantallaGameOver(Graphics g) {
         // Si se perdió o se eligió terminar el juego antes
-        if (vidas <= 0 || interrupcionJuego){
+        if (vidas <= 0 || interrupcionJuego) {
             g.drawImage(image_perdiste, 15, 40, this);
-        } else{ // Se ganó el juego
+        } else { // Se ganó el juego
             g.drawImage(image_ganaste, 15, 40, this);
         }
 
         g.drawImage(image_resumen, 640, 200, this);
+
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Helvetica", Font.BOLD, 35));
+        g.drawString("PUNTAJE:   " + jugadorActual.getPuntaje(), 660, 310);
+        g.drawString("ACIERTOS:  " + jugadorActual.getPreguntasEquivocadas(), 660, 410);
+        g.drawString("ERRORES:   " + (indicePregunta - jugadorActual.getPreguntasEquivocadas()), 660, 510);
+        g.drawString("TIMEOUTS:  " + jugadorActual.getTimeouts(), 660, 610);
+
         g.drawImage(boton_volverMenu.getImagen(), boton_volverMenu.getCoordX(),
                 boton_volverMenu.getCoordY(), this);
     }
 
+    public void pantallaInstrucciones(Graphics g) {
+        g.drawImage(image_fondoInstrucciones, 0, 0, ANCHO, ALTO, this);
+        g.drawImage(image_instruccionenter, 735, 250, this);
+        g.drawImage(image_instruccionpausa, 735, 100, this);
+        g.drawImage(image_instruccionrespuesta, boton_a.getCoordX() - 265, boton_a.getCoordY() - 145, this);
+        g.drawImage(image_instruccionsustancia, 115, 177, this);
+    }
+
     public void clicksPantallaJuego(int x, int y) {
         respuestaEquivocada = false;
+        boolean clickBoton = false;
         //////////////////////   SELECCION DE UNA OPCION    ////////////////////
         // Opcion A
         if (x > boton_a.getCoordX() && x < boton_a.getCoordX() + 55
                 && y > boton_a.getCoordY() && y < boton_a.getCoordY() + 55) {
+            clickBoton = true;
             // Si opcion A era la respuesta incorrecta
             if (!preguntas.get(indicePregunta).getRespuesta(0).isCorrecta()) {
                 respuestaEquivocada = true;
+            } else {
+                jugadorActual.respuestaCorrecta();
             }
         }
         // Opcion B
         if (x > boton_b.getCoordX() && x < boton_b.getCoordX() + 55
                 && y > boton_b.getCoordY() && y < boton_b.getCoordY() + 55) {
+            clickBoton = true;
             // Si opcion B era la respuesta incorrecta
             if (!preguntas.get(indicePregunta).getRespuesta(1).isCorrecta()) {
                 respuestaEquivocada = true;
+            } else {
+                jugadorActual.respuestaCorrecta();
             }
         }
         // Opcion C
         if (x > boton_c.getCoordX() && x < boton_c.getCoordX() + 55
                 && y > boton_c.getCoordY() && y < boton_c.getCoordY() + 55) {
+            clickBoton = true;
             // Si opcion C era la respuesta incorrecta
             if (!preguntas.get(indicePregunta).getRespuesta(2).isCorrecta()) {
                 respuestaEquivocada = true;
+            } else {
+                jugadorActual.respuestaCorrecta();
             }
         }
         // Opcion D
         if (x > boton_d.getCoordX() && x < boton_d.getCoordX() + 55
                 && y > boton_d.getCoordY() && y < boton_d.getCoordY() + 55) {
+            clickBoton = true;
             // Si opcion D era la respuesta incorrecta
             if (!preguntas.get(indicePregunta).getRespuesta(3).isCorrecta()) {
                 respuestaEquivocada = true;
+            } else {
+                jugadorActual.respuestaCorrecta();
             }
 
+        }
+
+        // La seleccion de alguna pregunta fue equivocada
+        if (clickBoton) {
+            if (respuestaEquivocada) {
+                vidas--;
+                respuestaEquivocada = false;
+                jugadorActual.respuestaEquivocada();
+                coordManosY = 177;
+            }
+            nextPregunta();
         }
 
     }
@@ -695,6 +754,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
             gameOver = true;
         } else {
             indicePregunta++;
+            contadorTiempo = 20;
         }
         timer.start();
     }
@@ -720,18 +780,36 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         image_mesa = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/mano.png");
         image_mano = Toolkit.getDefaultToolkit().getImage(bURL);
-        bURL = this.getClass().getResource("images/flecha.png");
-        image_flecha = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/puff.png");
+        image_puff = Toolkit.getDefaultToolkit().getImage(bURL);
+        
+        // Pantalla Menu
         bURL = this.getClass().getResource("images/tema1.png");
         image_tema1 = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/tema2.png");
         image_tema2 = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/tema3.png");
         image_tema3 = Toolkit.getDefaultToolkit().getImage(bURL);
-        bURL = this.getClass().getResource("images/puff.png");
-        image_puff = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/flecha.png");
+        image_flecha = Toolkit.getDefaultToolkit().getImage(bURL);
+        
+        
         bURL = this.getClass().getResource("images/pausa.png");
         image_pausa = Toolkit.getDefaultToolkit().getImage(bURL);
+        
+        
+        // Pantalla Instruccion
+        bURL = this.getClass().getResource("images/instrucciones_enter.png");
+        image_instruccionenter = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/instrucciones_respuesta.png");
+        image_instruccionrespuesta = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/instrucciones_substancia.png");
+        image_instruccionsustancia = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/instrucciones_pausa.png");
+        image_instruccionpausa = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/instrucciones_fondo.png");
+        image_fondoInstrucciones = Toolkit.getDefaultToolkit().getImage(bURL);
+
         // Pantalla Game Over
         bURL = this.getClass().getResource("images/ganaste.png");
         image_ganaste = Toolkit.getDefaultToolkit().getImage(bURL);
@@ -764,6 +842,8 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         bURL = this.getClass().getResource("images/volverMenu.png");
         image_volverMenu = Toolkit.getDefaultToolkit().getImage(bURL);
         boton_volverMenu = new Boton(image_volverMenu, 10, 560);
+        
+        
 
     }
 

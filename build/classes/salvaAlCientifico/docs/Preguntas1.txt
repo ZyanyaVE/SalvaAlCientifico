@@ -1,100 +1,100 @@
-Pregunta1
-RespuestaCorrecta1
-RespuestaInc1
-RespuestaInc1
-RespuestaInc1
-Pregunta2
-RespuestaCorrecta2
-RespuestaInc2
-RespuestaInc2
-RespuestaInc2
-Pregunta3
-RespuestaCorrecta3
-RespuestaInc3
-RespuestaInc3
-RespuestaInc3
-Pregunta4
-RespuestaCorrecta4
-RespuestaInc4
-RespuestaInc4
-RespuestaInc4
-Pregunta5
-RespuestaCorrecta5
-RespuestaInc5
-RespuestaInc5
-RespuestaInc5
-Pregunta5
-RespuestaCorrecta6
-RespuestaInc6
-RespuestaInc6
-RespuestaInc6
-Pregunta7
-RespuestaCorrecta7
-RespuestaInc7
-RespuestaInc7
-RespuestaInc7
-Pregunta8
-RespuestaCorrecta8
-RespuestaInc8
-RespuestaInc8
-RespuestaInc8
-Pregunta9
-RespuestaCorrecta9
-RespuestaInc9
-RespuestaInc9
-RespuestaInc9
-Pregunta10
-RespuestaCorrecta10
-RespuestaInc10
-RespuestaInc10
-RespuestaInc10
-Pregunta11
-RespuestaCorrecta11
-RespuestaInc11
-RespuestaInc11
-RespuestaInc11
-Pregunta12
-RespuestaCorrecta12
-RespuestaInc12
-RespuestaInc12
-RespuestaInc12
-Pregunta13
-RespuestaCorrecta13
-RespuestaInc13
-RespuestaInc13
-RespuestaInc13
-Pregunta14
-RespuestaCorrecta14
-RespuestaInc14
-RespuestaInc14
-RespuestaInc14
-Pregunta15
-RespuestaCorrecta15
-RespuestaInc15
-RespuestaInc15
-RespuestaInc15
-Pregunta16
-RespuestaCorrecta16
-RespuestaInc16
-RespuestaInc16
-RespuestaInc16
-Pregunta17
-RespuestaCorrecta17
-RespuestaInc17
-RespuestaInc17
-RespuestaInc17
-Pregunta18
-RespuestaCorrecta18
-RespuestaInc18
-RespuestaInc18
-RespuestaInc18
-Pregunta19
-RespuestaCorrecta19
-RespuestaInc19
-RespuestaInc19
-RespuestaInc19
-People Use To Ask Me What Do You Wanna Be When You Get Older And I Would Say What A Stupid Question The Real Question Is What Am I Right Now
-RespuestaCorrecta20
-RespuestaInc20
-RespuestaInc20
-RespuestaInc20
+1) ¿Qué es un ácido?
+Sustancia de que dona protones(H+) en solución acuosa. *
+Sustancia que dona neutrones
+Sustancia con grupo (OH)
+Sustancia que dona electrones.
+2) ¿Qué es una base?
+Sustancia que recibe protones (H+). *
+Sustancia que dona protones
+Sustancia con grupos (H)
+Sustancia que dona electrones.
+3) ¿Cómo reconocemos un ácido?
+Tiene H en su estructura molecular. *
+Tiene OH en su estructura molecular
+Tiene Boro en su estructura molecular
+Tiene Berilio en su estructura molecular
+4) ¿Cómo reconocemos una base?
+Tiene (OH) en su estructura molecular (mayoría de los casos).*
+Tiene H en su estructura molecular.
+Tiene Nitrógeno en su estructura molecular.
+Tiene Antimonio en su estructura molecular.
+5) ¿Qué pasa cuando juntas un ácido y una base?
+Se neutraliza. *
+Explota.
+Nada.
+Se hace color rojo.
+6) ¿Qué produce la neutralización de un ácido con una base?
+Sal. *
+Dulce.
+Arroz.
+Permanganato de Potasio.
+7) ¿Qué propiedades no corresponden a una base?
+Reaccionan con metales. *
+Papel tornasol se vuelve azul.
+Tienen sabor dulce.
+Es grumoso.
+8) ¿Cuál de estos es un ácido?
+HCl *
+NaOH
+KOH
+Al(OH)3
+9) ¿Cuál de estos e una base?
+Ca(OH)2 *
+H2SO4
+HF
+H3PO4
+10) ¿El jugo de limón es ácido o básico?
+Ácido 
+Básico
+Todos los anteriores
+Ninguno
+11) ¿Cuál de estos es un ácido?
+H2SO4
+NaOH
+KOH
+Al(OH)3
+12) ¿Qué es la escala de pH?
+Es una escala para medir la acidez o la alcalinidad(basicidad)*
+Mide electrones
+Mide energía de activación
+Mide molaridad
+13) ¿Cuál es el rango de la escala de pH común?
+Del 0 al 14*
+Del 0 al 7
+Del 7 al 14
+Solamente el 7
+14) De la escala del pH ¿Cuál rango corresponde a los más ácidos?
+Del 0 al 6 *
+Del 0 al 14
+Del 8 al 14
+El 7
+15) De la escala del pH común ¿Cuál rango es para los más básicos?
+Del 8 al 14~
+Del 0 al 7
+Del 0 al 14
+El 7
+16) De la escala del pH común ¿Cuál corresponde a una sustancia neutra?
+El 7*
+El 14
+El 0
+Ninguno.
+17) De la escala del pH común ¿Cuál corresponde a la sustancia más ácida?
+0 *
+14
+7
+4
+18) De la escala del pH común ¿Cuál corresponde a la sustancia más básica(alcalina)?
+14 *
+7
+0
+2
+19) ¿Cuál de estas sustancias es más ácida?
+HCL (pH=0) *
+Jugo estomacal (pH=1)
+Jugo de limón (pH=2)
+Refresco (pH=4.5)
+20) ¿Cuál de estas sustancias es más básica?
+NaOH (pH=14) *
+Caliza mineral (pH=12)
+Antiácido (pH = 10) 
+Clara de huevo (pH = 8)

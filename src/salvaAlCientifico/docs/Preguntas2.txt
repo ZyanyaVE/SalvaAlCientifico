@@ -1,100 +1,100 @@
-Pregunta1
-RespuestaCorrecta1
-RespuestaInc1
-RespuestaInc1
-RespuestaInc1
-Pregunta2
-RespuestaCorrecta2
-RespuestaInc2
-RespuestaInc2
-RespuestaInc2
-Pregunta3
-RespuestaCorrecta3
-RespuestaInc3
-RespuestaInc3
-RespuestaInc3
-Pregunta4
-RespuestaCorrecta4
-RespuestaInc4
-RespuestaInc4
-RespuestaInc4
-Pregunta5
-RespuestaCorrecta5
-RespuestaInc5
-RespuestaInc5
-RespuestaInc5
-Pregunta5
-RespuestaCorrecta6
-RespuestaInc6
-RespuestaInc6
-RespuestaInc6
-Pregunta7
-RespuestaCorrecta7
-RespuestaInc7
-RespuestaInc7
-RespuestaInc7
-Pregunta8
-RespuestaCorrecta8
-RespuestaInc8
-RespuestaInc8
-RespuestaInc8
-Pregunta9
-RespuestaCorrecta9
-RespuestaInc9
-RespuestaInc9
-RespuestaInc9
-Pregunta10
-RespuestaCorrecta10
-RespuestaInc10
-RespuestaInc10
-RespuestaInc10
-Pregunta11
-RespuestaCorrecta11
-RespuestaInc11
-RespuestaInc11
-RespuestaInc11
-Pregunta12
-RespuestaCorrecta12
-RespuestaInc12
-RespuestaInc12
-RespuestaInc12
-Pregunta13
-RespuestaCorrecta13
-RespuestaInc13
-RespuestaInc13
-RespuestaInc13
-Pregunta14
-RespuestaCorrecta14
-RespuestaInc14
-RespuestaInc14
-RespuestaInc14
-Pregunta15
-RespuestaCorrecta15
-RespuestaInc15
-RespuestaInc15
-RespuestaInc15
-Pregunta16
-RespuestaCorrecta16
-RespuestaInc16
-RespuestaInc16
-RespuestaInc16
-Pregunta17
-RespuestaCorrecta17
-RespuestaInc17
-RespuestaInc17
-RespuestaInc17
-Pregunta18
-RespuestaCorrecta18
-RespuestaInc18
-RespuestaInc18
-RespuestaInc18
-Pregunta19
-RespuestaCorrecta19
-RespuestaInc19
-RespuestaInc19
-RespuestaInc19
-Pregunta20 Documento 2
-RespuestaCorrecta20
-RespuestaInc20
-RespuestaInc20
-RespuestaInc20
+1) ¿Qué es un átomo?
+La unidad más pequeña de la materia que tiene las propiedades de un elemento químico. *
+Sustancia microscópica.
+Es un grupo eléctricamente neutro y suficientemente estable de al menos 2 átomos, unidos por enlaces químicos. (covalente u iónico)
+Ninguna de las anteriores.
+2) ¿Qué es una molécula?
+Es un grupo eléctricamente neutro y suficientemente estable de al menos 2 átomos, unidos por enlaces químicos. (covalente u iónico) *
+La unidad más pequeña de la materia que tiene las propiedades de un elemento químico. 
+Una sustancia pesada.
+Ninguna de las anteriores.
+3) ¿Qué es un ion?
+Es un átomo o conjunto de átomos que tienen carga eléctrica ya sea positiva o negativa. *
+La unidad más pequeña de la materia que tiene las propiedades de un elemento químico.
+Cargado positivamente
+Cargado negativamente.
+4) ¿Qué es un catión?
+Ion cargado positivamente. (Tiene más protones que electrones) *
+Sustancia básica
+Átomo neutro.
+Ninguna de las anteriores
+5) ¿Qué es un anión? 
+Un ion con cargado negativamente. (Tiene exceso de electrones). *
+Sustancia ácida.
+Átomo neutro.
+Ninguna de las anteriores.
+6) ¿Qué es un enlace químico?
+La interacción física responsable de las interacciones entre átomos, moléculas e iones. *
+Separar moléculas
+Es una rama de la química
+Es una rama de la física.
+7) ¿Qué es la electrovalencia?
+Es el número de electrones que el átomo tiene que ganar o perder para conseguir a la configuración electrónica de un gas noble (octeto). *
+Carga magnética.
+Es un carbocatión.
+Ninguna de las anteriores.
+8) ¿Qué tipos de enlaces químicos existen?
+Enlace: iónico, covalente y metálico. *
+Enlace: polar y no polar.
+Enlace iónico.
+Ninguna de las anteriores.
+9) ¿Cómo son los enlaces que unen átomos con pocos electrones en su última capa, y que forman una red de cationes rodeados por capas con electrones sobrantes?
+Metálico*
+Covalente
+Iónico
+Intermolecular
+10) ¿En qué capas se encuentran los electrones que forman parte de un enlace químico?
+En las más externas. *
+En las completas.
+En cualquier capa.
+En las más cercanas al núcleo.
+11) ¿Qué tipo de enlace resulta de la unión de iones de distinto signo (uno electropositivo y otro electronegativo)? Diferentes cargas electronegativas (mayores a 1.7)
+Enlace iónico. *
+Enlace covalente.
+Enlace metálico
+Enlace no polar.
+12) ¿Cuál aseveracíon es verdadera?
+lo igual disuelve a lo igual
+polar disuelve a no polar
+no polar disuelve a lo polar
+lo igual no disuelve a lo igual
+13) El agua es:
+polar
+no polar
+apolar
+inpolar
+14) La grasa es:
+no polar
+polar
+iónico
+metálico
+15) Sabiendo que la cadena de carbonos de una molécula es no polar (apolar),  cuál aseveracioón es verdadera:
+no es afín al agua, que es polar
+es afín al agua, que es polar
+no es afín a la grasa, que es no polar
+ninguna de las opciones
+16) Cuando tienes dos moléculas polares:
+se disuelven entre sí
+se repelen
+se destruyen
+ninguna de las opciones
+17) Una molécula no polar es:
+hidrofóbica
+hidrofílica
+polar
+ninguna de las opciones
+18) Cuál aseveración es verdadera
+un enlace iónico se forma entre un metal y un no metal
+un enlace iónico se forma entre dos polímeros
+un enlace iónico se da entre dos carbonos
+un enlace iónico se da entre dos moléculas iguales
+19) ¿Qué cosa determina si un enlace es iónico?
+la diferencia de electronegatividades entre los dos átomos
+la salinidad de la molécula
+todas las opciones
+ninguna de las opciones
+20) ¿Cuál aseveración es verdadera?
+dos átomos iguales tienen la misma electronegatividad, por lo que NO forman un enlace iónico
+dos átomos iguales Sí forman un enlace iónico
+un enlace covalente es igual a un enlace iónico
+ninguna de la opciones
