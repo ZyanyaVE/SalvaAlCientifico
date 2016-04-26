@@ -1,100 +1,100 @@
-1) ¿Qué es un ácido?
-Sustancia de que dona protones(H+) en solución acuosa. *
-Sustancia que dona neutrones
-Sustancia con grupo (OH)
-Sustancia que dona electrones.
-2) ¿Qué es una base?
-Sustancia que recibe protones (H+). *
-Sustancia que dona protones
-Sustancia con grupos (H)
-Sustancia que dona electrones.
-3) ¿Cómo reconocemos un ácido?
-Tiene H en su estructura molecular. *
-Tiene OH en su estructura molecular
-Tiene Boro en su estructura molecular
-Tiene Berilio en su estructura molecular
-4) ¿Cómo reconocemos una base?
-Tiene (OH) en su estructura molecular (mayoría de los casos).*
-Tiene H en su estructura molecular.
-Tiene Nitrógeno en su estructura molecular.
-Tiene Antimonio en su estructura molecular.
-5) ¿Qué pasa cuando juntas un ácido y una base?
-Se neutraliza. *
-Explota.
-Nada.
-Se hace color rojo.
-6) ¿Qué produce la neutralización de un ácido con una base?
-Sal. *
-Dulce.
-Arroz.
-Permanganato de Potasio.
-7) ¿Qué propiedades no corresponden a una base?
-Reaccionan con metales. *
-Papel tornasol se vuelve azul.
-Tienen sabor dulce.
-Es grumoso.
-8) ¿Cuál de estos es un ácido?
-HCl *
-NaOH
-KOH
-Al(OH)3
-9) ¿Cuál de estos e una base?
-Ca(OH)2 *
-H2SO4
-HF
-H3PO4
-10) ¿El jugo de limón es ácido o básico?
-Ácido 
-Básico
+1.  Un jabón está compuesto por:
+Sales de sodio o de potasio
+Un átomo
+Alcohol
+Sal de mesa
+2.  ¿Qué significa hidrolizar?
+Romper una molécula al agregar agua
+Agregar hierbas a una solución
+Agregar una base a una solución
+Agregar H2 a una reacción
+3.  Al hacer jabones cuál de los siguientes compuestos se hidrolizan:
+Una grasa
+Un polímero
+Un plástico
+Una sal
+4.  ¿Qué ingredientes necesitas para hacer un jabón?
+Todas las opciones
+Grasas
+Bases
+Agua
+5.  ¿Cómo son las micelas?
+Una especie de pelota hueca formada por las sales de sodio o potasio
+Una media luna rellena de moléculas
+Una especie de lámina de moléculas
+Una estructura en zig-zag formada por sales de sodio y potasio
+6.  ¿Por qué las micelas se acomodan en forma redonda?
+Porque una parte de la molécula del jabón es polar (afín al agua que está en el exterior) y la otra parte no es polar. 
+Porque la molécula tiene mucha flexibilidad
+Porque las moléculas del jabón se mueven aleatoriamente
+Porque las moléculas se rompen y se vuelven a unir en este tipo de estructura
+7.  ¿Cómo funcionan los jabones?
+La grasa es atrapada en la micela (especie de pelota formada por moléculas de jabón) y es arrastrado por el agua al enjuagarlo.
+El agua hace que la mancha o grasa se desprenda
+La sal de sodio del jabón libera el sodio, el cual limpia la grasa
+La grasa del jabón hace que todo se llene de grasa y no se vea diferencia entre lo limpio y lo sucio
+8.  ¿Cuál de los siguientes elementos del jabón NO es afín al agua (no es polar)?
+La cadena larga de carbonos
+La parte iónica de la molécula
 Todos los anteriores
 Ninguno
-11) ¿Cuál de estos es un ácido?
-H2SO4
-NaOH
-KOH
-Al(OH)3
-12) ¿Qué es la escala de pH?
-Es una escala para medir la acidez o la alcalinidad(basicidad)*
-Mide electrones
-Mide energía de activación
-Mide molaridad
-13) ¿Cuál es el rango de la escala de pH común?
-Del 0 al 14*
-Del 0 al 7
-Del 7 al 14
-Solamente el 7
-14) De la escala del pH ¿Cuál rango corresponde a los más ácidos?
-Del 0 al 6 *
-Del 0 al 14
-Del 8 al 14
-El 7
-15) De la escala del pH común ¿Cuál rango es para los más básicos?
-Del 8 al 14~
-Del 0 al 7
-Del 0 al 14
-El 7
-16) De la escala del pH común ¿Cuál corresponde a una sustancia neutra?
-El 7*
-El 14
-El 0
-Ninguno.
-17) De la escala del pH común ¿Cuál corresponde a la sustancia más ácida?
-0 *
-14
-7
-4
-18) De la escala del pH común ¿Cuál corresponde a la sustancia más básica(alcalina)?
-14 *
-7
-0
-2
-19) ¿Cuál de estas sustancias es más ácida?
-HCL (pH=0) *
-Jugo estomacal (pH=1)
-Jugo de limón (pH=2)
-Refresco (pH=4.5)
-20) ¿Cuál de estas sustancias es más básica?
-NaOH (pH=14) *
-Caliza mineral (pH=12)
-Antiácido (pH = 10) 
-Clara de huevo (pH = 8)
+9.  ¿Cuál de los siguientes elementos del jabón es afín al aceite?
+La cadena larga de carbonos
+La parte iónica de la molécula
+Todos los anteriores
+Ninguno
+10. ¿Qué es una molécula hidrofílica?
+Que le gusta el agua (es atraído por agua)
+Que no le gusta el agua (no es atraído por agua)
+Que le gusta el aceite (es atraído por aceite)
+Ninguna de las opciones
+11. ¿Qué es una molécula hidrofóbica?
+Que no le gusta el agua (no es atraído por agua)
+Que le gusta el agua (es atraído por agua)
+Que le gusta el aceite (es atraído por aceite)
+Ninguna de las opciones
+12. Sabiendo que la parte iónica del jabón es polar, podemos decir que es:
+Hidrofílica
+Hidrofóbica
+Metálica
+Covalente
+13. Sabiendo que una emulsión es una mezcla de dos sustancias que no están destinadas a mezclarse, es decir que no se mezclan; cuál de los siguientes ejemplos forman una emulsión:
+Agua y aceite
+Alcohol y agua
+Vinagre y agua
+Ninguno de las opciones
+14. Cuando tienes una mezcla en la que NO se perciben los dos componentes, tienes una mezcla:
+Homogénea
+Heterogénea
+Natural
+Artificial
+15. Cuando tienes una mezcla en la que SÍ se perciben los dos componentes, tienes una mezcla:
+Heterogénea
+Artificial
+Homogénea
+Natural
+16. ¿Por qué el agua disuelve el jabón?
+Porque el jabón tiene una parte polar
+Porque el agua disuelve todo
+Porque el jabón tiene un parte hidrofóbica
+Porque el jabón tiene una parte no polar
+17. Sabiendo que una formulación química conlleva varios ingredientes además de los reactivos, ¿cuál de los siguientes es una formulación?
+Todas las opciones
+Jabón
+Shampoo
+Detergente
+18. ¿Por qué el jabón lava?
+Porque el jabón captura la suciedad y el agua la arrastra
+Porque pinta un color blanco en la ropa
+Porque huele rico
+Ninguna de las opciones
+19. ¿Cuál es una propiedad que nos indica que el jabón es básico?
+Su textura y olor
+Su color
+Su temperatura
+Ninguna de las anteriores
+20. ¿Para qué es necesaria la parte polar del jabón?
+Para que se disuelva en el agua
+Para la grasa se disuelva
+Para que sea magnética
+Para que le dé un color rosa al jabón

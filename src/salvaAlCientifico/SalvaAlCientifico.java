@@ -12,6 +12,9 @@ import java.awt.Graphics;
 import java.awt.Image;
 import static java.awt.Color.black;
 import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.FontMetrics;
+import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,12 +30,15 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.Timer;
@@ -51,6 +57,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     private int indiceMenu = 1;         // 1 - 3
     private int contadorTiempo;
     private int distanciaCaidaMano = 0;
+    private int tiempoPorPregunta = 20;
     private boolean pausa;
     private boolean menuActivo;
     private boolean gameOver;
@@ -65,10 +72,16 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     private Boton boton_salirPausa;
     private Boton boton_volverPausa;
     private Boton boton_volverMenu;
-    ArrayList<Integer> numbers;
-    ArrayList<Pregunta> preguntas;
     private Jugador jugadorActual;
     private Timer timer;
+    private Font fontPregunta;
+    private Font fontRespuesta;
+    private Font fontResumen;
+    private FunFacts funfacts = new FunFacts();
+    
+    ArrayList<Integer> numbers;
+    ArrayList<Pregunta> preguntas;
+    
 
     //////////////////////////// Objetos ////////////////////////////////
     private Image dbImage;                          // Imagen a proyectar
@@ -99,6 +112,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     private Image image_instruccionsustancia;
     private Image image_instruccionpausa;
     private Image image_fondoInstrucciones;
+    private Image image_funfact;
     private Graphics dbg;                           // Objeto grafico
     private long tiempoActual;                      // Tiempo Actual
 
@@ -113,6 +127,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         setBackground(black);                              // Color de fondo del applet
         setSize(ANCHO, ALTO);                               // Dimensiones del applet 
         reinicia();
+        
 
         //Adds
         addKeyListener(this);   //Implementa Key Listener    
@@ -142,11 +157,16 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         menuActivo = true;
         gameOver = false;
         jugadorActual = new Jugador();
-        contadorTiempo = 20;
+        reiniciaContadorTiempo();
         interrupcionJuego = false;
         coordManosY = 177;
         instrucciones = false;
+        image_funfact = funfacts.getFunFact();
         timerJuego();
+    }
+    
+    public void reiniciaContadorTiempo(){
+        contadorTiempo = 20;
     }
 
     /**
@@ -249,10 +269,11 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
                 pantallaMenu(g);
             } else if (ventana == 2) {  // VENTANA DE JUEGO
                 //System.out.println("juego");
-                if (!instrucciones)
+                if (!instrucciones) {
                     pantallaJuego(g);
-                else
+                } else {
                     pantallaInstrucciones(g);
+                }
             } else if (ventana == 3) {  // VENTANA DE CREDITOS
                 //System.out.println("creditos");
             }
@@ -337,18 +358,18 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
                     instrucciones = false;
                 }
             }
-            if (k == '1') {
-                vidas = 1;
-            }
-            if (k == '2') {
-                vidas = 2;
-            }
-            if (k == '3') {
-                vidas = 3;
-            }
-            if (k == '4') {
-                vidas = 4;
-            }
+//            if (k == '1') {
+//                vidas = 1;
+//            }
+//            if (k == '2') {
+//                vidas = 2;
+//            }
+//            if (k == '3') {
+//                vidas = 3;
+//            }
+//            if (k == '4') {
+//                vidas = 4;
+//            }
             if (k == 'p' && !instrucciones) {
                 pausa = true;
                 System.out.println(pausa);
@@ -474,47 +495,90 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
 
     public void imprimePregunta(Graphics g) {
         String aux;
-        String resp;
         int indice = 0;
         int offsetX = 0, offsetY = 0;
 
         // Especificaciones para los fonts que se utilzaran y los tamanos
         String pregunta = preguntas.get(indicePregunta).getPregunta();
         g.setColor(Color.BLACK);
-        g.setFont(new Font("Courier New", Font.BOLD, 38));
-
-        // Imprime preguntas en el cuadro, cuidando que no salga de los limites
-        // en x
+        //g.setFont(new Font("Courier New", Font.BOLD, 38));
+        setFontPregunta();
+        g.setFont(fontPregunta);
+        
+        // Imprime preguntas en el cuadro
         int x = 645, y = 120;
-        for (int i = 0; i < pregunta.length(); i++) {
-            //System.out.println(indice);
-
-            aux = "" + pregunta.charAt(indice);
-            g.drawString(aux, x + offsetX, y + offsetY);
-            offsetX += 18;
-            // si no es la primera letra o mayor a 26 o sus multiplos 
-            if (i != 0 && i % 23 == 0) {
-                offsetX = 0;
-                //i = 0;
-                offsetY += 35;
-            }
-            indice++;
+        drawString(g, pregunta, x, y, 450);
+    }
+    public void setFontPregunta(){
+        InputStream ac = this.getClass().getResourceAsStream("/fonts/SEGOEUI.TTF");
+        try {
+            fontPregunta = Font.createFont(Font.TRUETYPE_FONT, ac).deriveFont(44f);
+        } catch (FontFormatException ex) {
+            Logger.getLogger(SalvaAlCientifico.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(SalvaAlCientifico.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void imprimeRespuesta(Graphics g){
+        String resp;
 
         // Especificaciones para los fonts que se utilzaran y los tamanos
         g.setColor(Color.BLACK);
-        g.setFont(new Font("Courier New", Font.BOLD, 17));
-
+        //g.setFont(new Font("Courier New", Font.BOLD, 17));
+        setFontRespuesta();
+        g.setFont(fontRespuesta);
+        
+        // Imprime respuestas
         resp = preguntas.get(indicePregunta).getRespuesta(0).getRespuesta();
-        g.drawString(resp, boton_a.getCoordX() + 60, boton_a.getCoordY() + 25);
+        drawString(g, resp, boton_a.getCoordX() + 60, boton_a.getCoordY() + 25, 365);
         resp = preguntas.get(indicePregunta).getRespuesta(1).getRespuesta();
-        g.drawString(resp, boton_b.getCoordX() + 60, boton_b.getCoordY() + 25);
+        drawString(g, resp, boton_b.getCoordX() + 60, boton_b.getCoordY() + 25, 365);
         resp = preguntas.get(indicePregunta).getRespuesta(2).getRespuesta();
-        g.drawString(resp, boton_c.getCoordX() + 60, boton_c.getCoordY() + 25);
+        drawString(g, resp, boton_c.getCoordX() + 60, boton_c.getCoordY() + 25, 365);
         resp = preguntas.get(indicePregunta).getRespuesta(3).getRespuesta();
-        g.drawString(resp, boton_d.getCoordX() + 60, boton_d.getCoordY() + 25);
+        drawString(g, resp, boton_d.getCoordX() + 60, boton_d.getCoordY() + 25, 365);
+    }
+    public void setFontRespuesta(){
+        InputStream ac = this.getClass().getResourceAsStream("/fonts/SEGOEUI.TTF");
+        try {
+            fontRespuesta = Font.createFont(Font.TRUETYPE_FONT, ac).deriveFont(21f);
+        } catch (FontFormatException ex) {
+            Logger.getLogger(SalvaAlCientifico.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(SalvaAlCientifico.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
+    public void drawString(Graphics g, String s, int x, int y, int width) {
+	// FontMetrics gives us information about the width,
+        // height, etc. of the current Graphics object's Font.
+        FontMetrics fm = g.getFontMetrics();
+
+        int lineHeight = fm.getHeight();
+
+        int curX = x;
+        int curY = y;
+
+        String[] words = s.split(" ");
+
+        for (String word : words) {
+            // Find out thw width of the word.
+            int wordWidth = fm.stringWidth(word + " ");
+
+            // If text exceeds the width, then move to next line.
+            if (curX + wordWidth >= x + width) {
+                curY += lineHeight;
+                curX = x;
+            }
+
+            g.drawString(word, curX, curY);
+
+            // Move over to the right for next word.
+            curX += wordWidth;
+        }
+    }
+    
     public void imprimeTiempo(Graphics g) {
         timer.start();
 
@@ -524,8 +588,10 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         } else {
             g.setColor(Color.RED);
         }
-        g.setFont(new Font("Courier New", Font.BOLD, 30));
-        g.drawString(String.valueOf(contadorTiempo), 1050, 690);
+        setFontPregunta();
+        g.setFont(fontPregunta);
+        //g.setFont(new Font("Courier New", Font.BOLD, 30));
+        g.drawString(String.valueOf(contadorTiempo), 1040, 700);
 
     }
 
@@ -538,7 +604,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
                 if (contadorTiempo <= 0) {
                     pregunta_timeOut = true;
                     timer.stop();
-                    contadorTiempo = 20;
+                    reiniciaContadorTiempo();
                 }
             }
         });
@@ -547,6 +613,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     public void pantallaJuego(Graphics g) {
         g.drawImage(image_mesa, 5, 683, this);
         imprimePregunta(g);
+        imprimeRespuesta(g);
         imprimeTiempo(g);
 
         // Dependiendo de las vidas que le queden al usuario son los
@@ -642,14 +709,28 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         g.drawImage(image_resumen, 640, 200, this);
 
         g.setColor(Color.BLACK);
-        g.setFont(new Font("Helvetica", Font.BOLD, 35));
-        g.drawString("PUNTAJE:   " + jugadorActual.getPuntaje(), 660, 310);
-        g.drawString("ACIERTOS:  " + jugadorActual.getPreguntasEquivocadas(), 660, 410);
-        g.drawString("ERRORES:   " + (indicePregunta - jugadorActual.getPreguntasEquivocadas()), 660, 510);
-        g.drawString("TIMEOUTS:  " + jugadorActual.getTimeouts(), 660, 610);
+        //g.setFont(new Font("Helvetica", Font.BOLD, 35));
+        setFontResumen();
+        g.setFont(fontResumen);
+        g.drawString("PUNTAJE:          " + jugadorActual.getPuntaje(), 660, 310);
+        g.drawString("ACIERTOS:         " + (indicePregunta + 1 - jugadorActual.getPreguntasEquivocadas()), 660, 410);
+        g.drawString("ERRORES:          " + jugadorActual.getPreguntasEquivocadas(), 660, 510);
+        g.drawString("TIMEOUTS:         " + jugadorActual.getTimeouts(), 660, 610);
 
         g.drawImage(boton_volverMenu.getImagen(), boton_volverMenu.getCoordX(),
                 boton_volverMenu.getCoordY(), this);
+        
+        g.drawImage(image_funfact, 35, 190, this);
+    }
+    public void setFontResumen(){
+        InputStream ac = this.getClass().getResourceAsStream("/fonts/SEGOEUI.TTF");
+        try {
+            fontResumen = Font.createFont(Font.TRUETYPE_FONT, ac).deriveFont(35f);
+        } catch (FontFormatException ex) {
+            Logger.getLogger(SalvaAlCientifico.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(SalvaAlCientifico.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void pantallaInstrucciones(Graphics g) {
@@ -663,6 +744,8 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     public void clicksPantallaJuego(int x, int y) {
         respuestaEquivocada = false;
         boolean clickBoton = false;
+        
+        
         //////////////////////   SELECCION DE UNA OPCION    ////////////////////
         // Opcion A
         if (x > boton_a.getCoordX() && x < boton_a.getCoordX() + 55
@@ -754,10 +837,12 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
             gameOver = true;
         } else {
             indicePregunta++;
-            contadorTiempo = 20;
+
+            coordManosY = 177;
+            reiniciaContadorTiempo();
+            timer.start();
         }
-        timer.start();
-    }
+    }    
 
     public void asignacionImagenes() {
         ////////////////////        IMAGENES         ///////////////////////
@@ -782,7 +867,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         image_mano = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/puff.png");
         image_puff = Toolkit.getDefaultToolkit().getImage(bURL);
-        
+
         // Pantalla Menu
         bURL = this.getClass().getResource("images/tema1.png");
         image_tema1 = Toolkit.getDefaultToolkit().getImage(bURL);
@@ -792,12 +877,10 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         image_tema3 = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/flecha.png");
         image_flecha = Toolkit.getDefaultToolkit().getImage(bURL);
-        
-        
+
         bURL = this.getClass().getResource("images/pausa.png");
         image_pausa = Toolkit.getDefaultToolkit().getImage(bURL);
-        
-        
+
         // Pantalla Instruccion
         bURL = this.getClass().getResource("images/instrucciones_enter.png");
         image_instruccionenter = Toolkit.getDefaultToolkit().getImage(bURL);
@@ -843,8 +926,6 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         image_volverMenu = Toolkit.getDefaultToolkit().getImage(bURL);
         boton_volverMenu = new Boton(image_volverMenu, 10, 560);
         
-        
-
     }
 
     @Override
