@@ -558,21 +558,22 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         setFontRespuesta();
         g.setFont(fontRespuesta);
 
+        
         // Imprime respuestas
         resp = preguntas.get(indicePregunta).getRespuesta(0).getRespuesta();
-        drawString(g, resp, boton_a.getCoordX() + 60, boton_a.getCoordY() + 25, 365);
+        drawString(g, resp, boton_a.getCoordX() + 60, boton_a.getCoordY() + 17, 365);
         resp = preguntas.get(indicePregunta).getRespuesta(1).getRespuesta();
-        drawString(g, resp, boton_b.getCoordX() + 60, boton_b.getCoordY() + 25, 365);
+        drawString(g, resp, boton_b.getCoordX() + 60, boton_b.getCoordY() + 17, 365);
         resp = preguntas.get(indicePregunta).getRespuesta(2).getRespuesta();
-        drawString(g, resp, boton_c.getCoordX() + 60, boton_c.getCoordY() + 25, 365);
+        drawString(g, resp, boton_c.getCoordX() + 60, boton_c.getCoordY() + 17, 365);
         resp = preguntas.get(indicePregunta).getRespuesta(3).getRespuesta();
-        drawString(g, resp, boton_d.getCoordX() + 60, boton_d.getCoordY() + 25, 365);
+        drawString(g, resp, boton_d.getCoordX() + 60, boton_d.getCoordY() + 17, 365);
     }
 
     public void setFontRespuesta() {
         InputStream ac = this.getClass().getResourceAsStream("/fonts/SEGOEUI.TTF");
         try {
-            fontRespuesta = Font.createFont(Font.TRUETYPE_FONT, ac).deriveFont(21f);
+            fontRespuesta = Font.createFont(Font.TRUETYPE_FONT, ac).deriveFont(18f);
         } catch (FontFormatException ex) {
             Logger.getLogger(SalvaAlCientifico.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {

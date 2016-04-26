@@ -24,7 +24,7 @@ Una media luna rellena de moléculas
 Una especie de lámina de moléculas
 Una estructura en zig-zag formada por sales de sodio y potasio
 6.  ¿Por qué las micelas se acomodan en forma redonda?
-Porque una parte de la molécula del jabón es polar (afín al agua que está en el exterior) y la otra parte no es polar. 
+Porque una parte de la molécula del jabón es polar y la otra parte no es polar. 
 Porque la molécula tiene mucha flexibilidad
 Porque las moléculas del jabón se mueven aleatoriamente
 Porque las moléculas se rompen y se vuelven a unir en este tipo de estructura

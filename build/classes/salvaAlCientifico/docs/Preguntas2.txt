@@ -1,10 +1,10 @@
 1) ¿Qué es un átomo?
 La unidad más pequeña de la materia que tiene las propiedades de un elemento químico. *
 Sustancia microscópica.
-Es un grupo eléctricamente neutro y suficientemente estable de al menos 2 átomos, unidos por enlaces químicos. (covalente u iónico)
+Es un grupo eléctricamente neutro y suficientemente estable de al menos 2 átomos, unidos por enlaces químicos
 Ninguna de las anteriores.
 2) ¿Qué es una molécula?
-Es un grupo eléctricamente neutro y suficientemente estable de al menos 2 átomos, unidos por enlaces químicos. (covalente u iónico) *
+Es un grupo eléctricamente neutro y suficientemente estable de al menos 2 átomos, unidos por enlaces químicos*
 La unidad más pequeña de la materia que tiene las propiedades de un elemento químico. 
 Una sustancia pesada.
 Ninguna de las anteriores.
@@ -29,7 +29,7 @@ Separar moléculas
 Es una rama de la química
 Es una rama de la física.
 7) ¿Qué es la electrovalencia?
-Es el número de electrones que el átomo tiene que ganar o perder para conseguir a la configuración electrónica de un gas noble (octeto). *
+Es el número de electrones que el átomo debe ganar o perder para conseguir a la conf. electrónica de un gas noble*
 Carga magnética.
 Es un carbocatión.
 Ninguna de las anteriores.
