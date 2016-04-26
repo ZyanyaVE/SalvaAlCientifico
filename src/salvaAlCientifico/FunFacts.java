@@ -18,7 +18,7 @@ import java.util.LinkedList;
 public class FunFacts {
 
     private LinkedList<Image> imagenes;
-    private int cont = 3, index;
+    private int cont = 7, index;
     URL URLtemp;
     Image imagen;
     
@@ -33,7 +33,7 @@ public class FunFacts {
     }
     
     public Image getFunFact(){
-        index = (int )(Math.random() * 3 + 0);;
+        index = (int )(Math.random() * cont + 0);;
         System.out.println(index);
         return imagenes.get(index);
     }

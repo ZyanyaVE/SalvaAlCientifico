@@ -64,6 +64,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     private boolean pregunta_timeOut;
     private boolean interrupcionJuego;
     private boolean instrucciones;
+    private boolean pantallaGaleria;
     boolean respuestaEquivocada;
     private Boton boton_a;
     private Boton boton_b;
@@ -78,10 +79,10 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     private Font fontRespuesta;
     private Font fontResumen;
     private FunFacts funfacts = new FunFacts();
-    
+    private Galeria galeria = new Galeria();
+
     ArrayList<Integer> numbers;
     ArrayList<Pregunta> preguntas;
-    
 
     //////////////////////////// Objetos ////////////////////////////////
     private Image dbImage;                          // Imagen a proyectar
@@ -113,6 +114,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     private Image image_instruccionpausa;
     private Image image_fondoInstrucciones;
     private Image image_funfact;
+    private Image image_galeria;
     private Graphics dbg;                           // Objeto grafico
     private long tiempoActual;                      // Tiempo Actual
 
@@ -127,7 +129,6 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         setBackground(black);                              // Color de fondo del applet
         setSize(ANCHO, ALTO);                               // Dimensiones del applet 
         reinicia();
-        
 
         //Adds
         addKeyListener(this);   //Implementa Key Listener    
@@ -164,8 +165,8 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         image_funfact = funfacts.getFunFact();
         timerJuego();
     }
-    
-    public void reiniciaContadorTiempo(){
+
+    public void reiniciaContadorTiempo() {
         contadorTiempo = 20;
     }
 
@@ -254,6 +255,10 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
                 if (!gameOver) {
                     g.drawImage(image_tituloPrincipal, 15, 40, this);
                 }
+            }
+            
+            if (pantallaGaleria){
+                
             }
             // Ventana de Menu
             if (pausa) {
@@ -349,6 +354,11 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
                     ventana = 2;
                     instrucciones = true;
                     break;
+            }
+            if (k == 'k') {
+                ventana = -1;
+                pantallaGaleria = true;
+                return;
             }
             //System.out.println(indiceMenu);
             // CHEATS DE VENTANA DE JUEGO Y BOTON DE PAUSA 
@@ -504,12 +514,13 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         //g.setFont(new Font("Courier New", Font.BOLD, 38));
         setFontPregunta();
         g.setFont(fontPregunta);
-        
+
         // Imprime preguntas en el cuadro
         int x = 645, y = 120;
         drawString(g, pregunta, x, y, 450);
     }
-    public void setFontPregunta(){
+
+    public void setFontPregunta() {
         InputStream ac = this.getClass().getResourceAsStream("/fonts/SEGOEUI.TTF");
         try {
             fontPregunta = Font.createFont(Font.TRUETYPE_FONT, ac).deriveFont(44f);
@@ -519,8 +530,8 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
             Logger.getLogger(SalvaAlCientifico.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void imprimeRespuesta(Graphics g){
+
+    public void imprimeRespuesta(Graphics g) {
         String resp;
 
         // Especificaciones para los fonts que se utilzaran y los tamanos
@@ -528,7 +539,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         //g.setFont(new Font("Courier New", Font.BOLD, 17));
         setFontRespuesta();
         g.setFont(fontRespuesta);
-        
+
         // Imprime respuestas
         resp = preguntas.get(indicePregunta).getRespuesta(0).getRespuesta();
         drawString(g, resp, boton_a.getCoordX() + 60, boton_a.getCoordY() + 25, 365);
@@ -539,7 +550,8 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         resp = preguntas.get(indicePregunta).getRespuesta(3).getRespuesta();
         drawString(g, resp, boton_d.getCoordX() + 60, boton_d.getCoordY() + 25, 365);
     }
-    public void setFontRespuesta(){
+
+    public void setFontRespuesta() {
         InputStream ac = this.getClass().getResourceAsStream("/fonts/SEGOEUI.TTF");
         try {
             fontRespuesta = Font.createFont(Font.TRUETYPE_FONT, ac).deriveFont(21f);
@@ -551,7 +563,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     }
 
     public void drawString(Graphics g, String s, int x, int y, int width) {
-	// FontMetrics gives us information about the width,
+        // FontMetrics gives us information about the width,
         // height, etc. of the current Graphics object's Font.
         FontMetrics fm = g.getFontMetrics();
 
@@ -578,7 +590,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
             curX += wordWidth;
         }
     }
-    
+
     public void imprimeTiempo(Graphics g) {
         timer.start();
 
@@ -686,6 +698,8 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
             g.drawImage(image_flecha, 420, 550, this);
         }
 
+        g.drawImage(image_galeria, 15, 610, this);
+
     }
 
     public void pantallaPausa(Graphics g) {
@@ -719,10 +733,11 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
 
         g.drawImage(boton_volverMenu.getImagen(), boton_volverMenu.getCoordX(),
                 boton_volverMenu.getCoordY(), this);
-        
+
         g.drawImage(image_funfact, 35, 190, this);
     }
-    public void setFontResumen(){
+
+    public void setFontResumen() {
         InputStream ac = this.getClass().getResourceAsStream("/fonts/SEGOEUI.TTF");
         try {
             fontResumen = Font.createFont(Font.TRUETYPE_FONT, ac).deriveFont(35f);
@@ -744,8 +759,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     public void clicksPantallaJuego(int x, int y) {
         respuestaEquivocada = false;
         boolean clickBoton = false;
-        
-        
+
         //////////////////////   SELECCION DE UNA OPCION    ////////////////////
         // Opcion A
         if (x > boton_a.getCoordX() && x < boton_a.getCoordX() + 55
@@ -842,7 +856,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
             reiniciaContadorTiempo();
             timer.start();
         }
-    }    
+    }
 
     public void asignacionImagenes() {
         ////////////////////        IMAGENES         ///////////////////////
@@ -867,6 +881,8 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         image_mano = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/puff.png");
         image_puff = Toolkit.getDefaultToolkit().getImage(bURL);
+        bURL = this.getClass().getResource("images/galeria.png");
+        image_galeria = Toolkit.getDefaultToolkit().getImage(bURL);
 
         // Pantalla Menu
         bURL = this.getClass().getResource("images/tema1.png");
@@ -925,7 +941,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         bURL = this.getClass().getResource("images/volverMenu.png");
         image_volverMenu = Toolkit.getDefaultToolkit().getImage(bURL);
         boton_volverMenu = new Boton(image_volverMenu, 10, 560);
-        
+
     }
 
     @Override
