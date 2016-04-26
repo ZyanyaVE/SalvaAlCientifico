@@ -115,6 +115,8 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     private Image image_fondoInstrucciones;
     private Image image_funfact;
     private Image image_galeria;
+    private Image image_regresarMenu;
+    private Image image_navegar;
     private Graphics dbg;                           // Objeto grafico
     private long tiempoActual;                      // Tiempo Actual
 
@@ -256,9 +258,9 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
                     g.drawImage(image_tituloPrincipal, 15, 40, this);
                 }
             }
-            
-            if (pantallaGaleria){
-                
+
+            if (pantallaGaleria) {
+                pantallaGaleria(g);
             }
             // Ventana de Menu
             if (pausa) {
@@ -312,6 +314,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     public void keyReleased(KeyEvent e) {
         char k = e.getKeyChar();
 
+
         // SI SE ENCUENTRA EN LA PANTALLA DE PAUSA SE QUITA PRESIONANDO P
         if (pausa) {
             if (k == 'p') {
@@ -355,7 +358,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
                     instrucciones = true;
                     break;
             }
-            if (k == 'k') {
+            if (k == 'g') {
                 ventana = -1;
                 pantallaGaleria = true;
                 return;
@@ -389,6 +392,21 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
 
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             System.exit(0);
+        }
+                if (pantallaGaleria) {
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_LEFT:
+                    galeria.previousImage();
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    galeria.nextImage();
+                    break;
+                case KeyEvent.VK_ENTER:
+                    ventana = 1;
+                    pantallaGaleria = false;
+                    galeria.resetIndex();
+                    break;
+            }
         }
     }
 
@@ -737,6 +755,14 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         g.drawImage(image_funfact, 35, 190, this);
     }
 
+    public void pantallaGaleria(Graphics g) {
+        g.drawImage(galeria.getImage(), (ANCHO / 3 - 105), (ALTO / 4), this);
+        
+        
+        g.drawImage(image_regresarMenu, 10, 550, this);
+        g.drawImage(image_navegar, 850, 550, this);
+    }
+
     public void setFontResumen() {
         InputStream ac = this.getClass().getResourceAsStream("/fonts/SEGOEUI.TTF");
         try {
@@ -883,6 +909,12 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         image_puff = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/galeria.png");
         image_galeria = Toolkit.getDefaultToolkit().getImage(bURL);
+        
+        bURL = this.getClass().getResource("images/galeria/regresarMenu.png");
+        image_regresarMenu = Toolkit.getDefaultToolkit().getImage(bURL);
+        
+        bURL = this.getClass().getResource("images/galeria/navegar.png");
+        image_navegar = Toolkit.getDefaultToolkit().getImage(bURL);
 
         // Pantalla Menu
         bURL = this.getClass().getResource("images/tema1.png");

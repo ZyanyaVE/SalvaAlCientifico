@@ -17,7 +17,7 @@ import java.util.LinkedList;
 public class Galeria {
 
     private LinkedList<Image> imagenes;
-    private int cont = 7, index = 0;
+    private int cont = 9, index = 0;
     URL URLtemp;
     Image imagen;
 
@@ -30,21 +30,26 @@ public class Galeria {
         }
     }
 
-    public Image nextImage() {
-        if (index == cont)
+    public void nextImage() {
+        if (index == cont - 1)
             index = 0;
         else
             index++;
         
-        return imagenes.get(index);
     }
     
-        public Image previousImage() {
+        public void previousImage() {
         if (index == 0)
-            index = cont;
+            index = cont - 1;
         else
             index--;
-        
-        return imagenes.get(index);
     }
+        
+        public Image getImage(){
+            return imagenes.get(index);
+        }
+        
+        public void resetIndex(){
+            index = 0;
+        }
 }
