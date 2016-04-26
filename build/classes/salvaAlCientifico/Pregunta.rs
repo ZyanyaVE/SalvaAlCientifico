@@ -1,1 +1,0 @@
-salvaralcientifico.Pregunta

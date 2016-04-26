@@ -31,6 +31,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -467,17 +468,17 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         Pregunta newPregunta;
         ArrayList<Respuesta> respuestas = new ArrayList<Respuesta>(4);
         // The name of the file to open.
-        String fileName = "src/salvaAlCientifico/docs/Preguntas" + indiceMenu + ".txt";
+        //String fileName = "src/salvaAlCientifico/docs/Preguntas" + indiceMenu + ".txt";
 
         // This will reference one line at a time
         String line = null;
 
         try {
             // FileReader reads text files in the default encoding.
-            FileReader fileReader = new FileReader(fileName);
+            //FileReader fileReader = new FileReader(fileName);
 
             // Always wrap FileReader in BufferedReader.
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("docs/Preguntas" + indiceMenu + ".txt")));;
 
             while ((line = bufferedReader.readLine()) != null) {
                 respuestas.clear();
@@ -509,12 +510,10 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
             bufferedReader.close();
         } catch (FileNotFoundException ex) {
             System.out.println(
-                    "Unable to open file '"
-                    + fileName + "'");
+                    "Unable to open file");
         } catch (IOException ex) {
             System.out.println(
-                    "Error reading file '"
-                    + fileName + "'");
+                    "Error reading file");
             // Or we could just do this: 
             // ex.printStackTrace();
         }
@@ -900,7 +899,7 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
         image_marie = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/albert.png");
         image_albert = Toolkit.getDefaultToolkit().getImage(bURL);
-        bURL = this.getClass().getResource("images/rectanguloPreguntas.png");
+        bURL = this.getClass().getResource("images/rectangulopreguntas.png");
         image_cuadroPreguntas = Toolkit.getDefaultToolkit().getImage(bURL);
         bURL = this.getClass().getResource("images/mesa.png");
         image_mesa = Toolkit.getDefaultToolkit().getImage(bURL);
