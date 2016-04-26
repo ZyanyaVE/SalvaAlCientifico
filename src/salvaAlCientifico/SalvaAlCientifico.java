@@ -756,11 +756,11 @@ public class SalvaAlCientifico extends JFrame implements Runnable, KeyListener, 
     }
 
     public void pantallaGaleria(Graphics g) {
-        g.drawImage(galeria.getImage(), (ANCHO / 3 - 105), (ALTO / 4), this);
+        g.drawImage(galeria.getImage(), (ANCHO / 2 - 325), (ALTO / 4), this);
         
         
-        g.drawImage(image_regresarMenu, 10, 550, this);
-        g.drawImage(image_navegar, 850, 550, this);
+        g.drawImage(image_regresarMenu, 10, ALTO - 85, this);
+        g.drawImage(image_navegar, ANCHO -135,  ALTO - 85, this);
     }
 
     public void setFontResumen() {
